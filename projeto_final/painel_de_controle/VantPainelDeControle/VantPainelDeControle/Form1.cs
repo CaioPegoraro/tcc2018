@@ -109,8 +109,8 @@ namespace VantPainelDeControle
                     comboBox1.Enabled = false;
 
                     textBoxReceber.AppendText("\n\n == Conectado ao emissor primário == \n");
+                    
                     //habilita os demais modulos do controlador para uso
-
                     this.btnConexaoRemota.Enabled = true;
                     this.btnPilotoAuto.Enabled = true;
                     this.btnBuzzer.Enabled = true;
