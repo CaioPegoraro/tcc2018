@@ -83,9 +83,7 @@ namespace VantPainelDeControle
         {
 
             RxString = serialPort1.ReadLine();              //le o dado disponível na serialx
-
             pacote_recebido = Int32.Parse(RxString);
-
             this.Invoke(new EventHandler(trataDadoRecebido));   //chama outra thread para escrever o dado no text box
         }
 

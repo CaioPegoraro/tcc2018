@@ -5,18 +5,20 @@
 //bibliotecas globais
 #include "Arduino.h"
 #include <SPI.h>
-#include <nRF24L01.h>
-#include <RF24.h>
+#include "nRF24L01.h"
+#include "RF24.h"
 
 //bibliotecas locais
-#include "pacote.h"
-#include "led.h"
+#include "Pacote.h"
+#include "Led.h"
 
 //inicialização do radio controle, caso fosse um arduino mega os pinos seriam: radio(48, 49);
 //com os canais de leitura/escrita (no receptor os valores devem estar invertidos para a comunicação).
+//const byte rxAddr[6] = "00001";
+//const byte wxAddr[6] = "00002";
 RF24 radio(7, 8);
-const byte rxAddr[6] = "00001";
-const byte wxAddr[6] = "00002";
+const uint64_t rxAddr = 0xA8E8F0F0E1LL;
+const uint64_t wxAddr = 0xE8E8F0F0E1LL;
 
 //a estrutura para armazenar um comando recebido
 pacote dados;
@@ -36,16 +38,6 @@ void TesteLeds(){
   //PARAMETROS: nenhum
   
   LED_LIGADO.setOn();
-  delay(1000);
-  LED_CONEXAO.setOn();
-  delay(1000);
-  LED_COMUNICACAO.setOn();
-  delay(1000);
-  LED_LIGADO.setOff();
-  LED_CONEXAO.setOff();
-  LED_COMUNICACAO.setOff();
-  
-  LED_LIGADO.setOn();
   delay(500);
   LED_CONEXAO.setOn();
   delay(500);
@@ -54,6 +46,7 @@ void TesteLeds(){
   LED_LIGADO.setOff();
   LED_CONEXAO.setOff();
   LED_COMUNICACAO.setOff();
+  delay(500);
   
   LED_LIGADO.setOn();
   delay(200);
@@ -64,7 +57,25 @@ void TesteLeds(){
   LED_LIGADO.setOff();
   LED_CONEXAO.setOff();
   LED_COMUNICACAO.setOff();
+  delay(200);
+  
+  LED_LIGADO.setOn();
+  delay(100);
+  LED_CONEXAO.setOn();
+  delay(100);
+  LED_COMUNICACAO.setOn();
+  delay(100);
+  LED_LIGADO.setOff();
+  LED_CONEXAO.setOff();
+  LED_COMUNICACAO.setOff();
+  delay(500);
+}
 
+void led_com_blink(){
+  LED_COMUNICACAO.setOn();
+  delay(100);
+  LED_COMUNICACAO.setOff();
+  delay(100);
 }
 
 void setup() {
@@ -72,15 +83,16 @@ void setup() {
   TesteLeds();
 
   //comunicação serial com timeout (para ajustar a velocidade de açãoo
-  Serial.begin(9600);
+  Serial.begin(57600);
   Serial.setTimeout(50);
 
   //inicialização da comunicação sem fio
   radio.begin();
-  radio.setRetries(15, 15);
+  //radio.setRetries(15, 15);
+  //radio.setPayloadSize(8);
   radio.openWritingPipe(wxAddr);
-  radio.openReadingPipe(0, rxAddr);
-  radio.stopListening();
+  //radio.openReadingPipe(0, rxAddr);
+  //radio.stopListening();
 
   //dispositivo ligado
   LED_LIGADO.setOn();
@@ -96,7 +108,7 @@ void loop() {
   //verifica se a porta serial possui dados para leitura
   if (Serial.available() > 0) {
     //Inicio: leitura do valor enviado pelo pc host via usb
-    LED_COMUNICACAO.setOn();
+    led_com_blink();
 
     //realiza a leitura dos 2 bytes transferidos (padrao adotado)
     byte buff[2];
@@ -112,10 +124,18 @@ void loop() {
     //Serial.println(dados.valor);
 
     //envia os dados via conexão sem fio para o receptor primário
-    radio.write(&dados, sizeof(dados));
 
-    //Fim: leitura do valor enviado pelo pc via usb
-    LED_COMUNICACAO.setOff();
+    //Serial.println("enviando dados pelo RF24");
+    //radio.write(&dados, sizeof(dados));
+
+     //realiza tentativas sucessivas de envio do dado pela conexão sem fio
+     LED_COMUNICACAO.setOn();
+     bool ok;
+      do{
+        ok = radio.write(&dados,sizeof(dados));
+      }while(!ok);
+     LED_COMUNICACAO.setOff();
+     //Fim: leitura do valor enviado pelo pc via usb  e envio wireless   
 
     //avaliar tipo de comando: simples ou composto
     //simples: um comando de uma via, apenas é enviado e pronto
@@ -127,9 +147,14 @@ void loop() {
     //permanecendo assim nos 2 bytes (ou no caso 1 inteiro).
 
     //se o valor for um comando composto, aguarda uma resposta do vant:
+    
     if (dados.cmd >= 125) {
       //Serial.println("");
       //Serial.println("Aguardando resposta \n");
+
+      /*
+       
+      radio.openReadingPipe(0, rxAddr);
       radio.startListening();
       for (int i = 0; i < 500; i++) {
         done = radio.available();
@@ -139,10 +164,12 @@ void loop() {
         delay(4);
       }
 
-      if (done) {
+      */
+      //if(done)
+      if (1) {
         //recebeu uma resposta do vant, agora precisa tratar de acordo com o comando original
         LED_COMUNICACAO.setOn();
-        radio.read(&dados, sizeof(dados));
+        //radio.read(&dados, sizeof(dados));
 
         switch (dados.cmd) {
           case 125: //estabelecer conexao
@@ -178,5 +205,6 @@ void loop() {
       }
       radio.stopListening();
     }
+    
   }
 }

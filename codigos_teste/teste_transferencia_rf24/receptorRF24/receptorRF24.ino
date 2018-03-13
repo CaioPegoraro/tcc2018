@@ -20,7 +20,7 @@ void setup(void){
 void loop(void){
  
   if (radio.available()){
-    Serial.print("recibe:");
+    Serial.print("recebido:");
 
     //radio.read(const void *buf, uint8_t len)
     radio.read( &recibeData, sizeof(int));     

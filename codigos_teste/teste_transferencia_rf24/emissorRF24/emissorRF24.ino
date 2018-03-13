@@ -35,7 +35,7 @@ void loop(void)
       
       digitalWrite(4,LOW);
       data++;
-      delay(200);
+      delay(1000);
 }
 
 
