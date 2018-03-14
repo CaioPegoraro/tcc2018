@@ -96,7 +96,7 @@
             this.lblM1 = new System.Windows.Forms.TextBox();
             this.lblStatusConexao = new System.Windows.Forms.Label();
             this.lblStatusAutomatico = new System.Windows.Forms.Label();
-            this.btnPilotoAuto = new System.Windows.Forms.Button();
+            this.btnEstabAuto = new System.Windows.Forms.Button();
             this.btnBuzzer = new System.Windows.Forms.Button();
             this.lblStatusBuzzer = new System.Windows.Forms.Label();
             this.textBoxReceber = new System.Windows.Forms.TextBox();
@@ -809,15 +809,16 @@
             this.lblStatusAutomatico.TabIndex = 11;
             this.lblStatusAutomatico.Text = "OFF";
             // 
-            // btnPilotoAuto
+            // btnEstabAuto
             // 
-            this.btnPilotoAuto.Enabled = false;
-            this.btnPilotoAuto.Location = new System.Drawing.Point(432, 53);
-            this.btnPilotoAuto.Name = "btnPilotoAuto";
-            this.btnPilotoAuto.Size = new System.Drawing.Size(87, 45);
-            this.btnPilotoAuto.TabIndex = 10;
-            this.btnPilotoAuto.Text = "Estabilizador automático";
-            this.btnPilotoAuto.UseVisualStyleBackColor = true;
+            this.btnEstabAuto.Enabled = false;
+            this.btnEstabAuto.Location = new System.Drawing.Point(432, 53);
+            this.btnEstabAuto.Name = "btnEstabAuto";
+            this.btnEstabAuto.Size = new System.Drawing.Size(87, 45);
+            this.btnEstabAuto.TabIndex = 10;
+            this.btnEstabAuto.Text = "Estabilizador automático";
+            this.btnEstabAuto.UseVisualStyleBackColor = true;
+            this.btnEstabAuto.Click += new System.EventHandler(this.btnEstabAuto_Click);
             // 
             // btnBuzzer
             // 
@@ -873,7 +874,7 @@
             // btnLiberarMotores
             // 
             this.btnLiberarMotores.Enabled = false;
-            this.btnLiberarMotores.Location = new System.Drawing.Point(754, 56);
+            this.btnLiberarMotores.Location = new System.Drawing.Point(757, 53);
             this.btnLiberarMotores.Name = "btnLiberarMotores";
             this.btnLiberarMotores.Size = new System.Drawing.Size(87, 44);
             this.btnLiberarMotores.TabIndex = 42;
@@ -910,7 +911,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnConexaoRemota);
             this.Controls.Add(this.lblStatusConexao);
-            this.Controls.Add(this.btnPilotoAuto);
+            this.Controls.Add(this.btnEstabAuto);
             this.Controls.Add(this.lblStatusAutomatico);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -957,7 +958,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label lblStatusConexao;
         private System.Windows.Forms.Label lblStatusAutomatico;
-        private System.Windows.Forms.Button btnPilotoAuto;
+        private System.Windows.Forms.Button btnEstabAuto;
         private System.Windows.Forms.ToolStripMenuItem fecharToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBox8;

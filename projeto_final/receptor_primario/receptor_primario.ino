@@ -26,8 +26,8 @@ const uint64_t wxAddr = 0xA8E8F0F0E1LL;
 #include <Wire.h>
 #define RECEPTOR_SECUNDARIO_ADDR 0x60 //endereco do receptor primario
 
+//Variaveis temporarias para comunicacao serial/wireless
 pacote dados;
-
 byte buff[2];
 
 //Variáveis de hardware
@@ -72,7 +72,7 @@ void TesteLeds(){
 }
 
 void setup()
-{
+{  
   //comunicação IC2 (entre os dispositivos do barramento serial)
   Wire.begin();
 
@@ -131,7 +131,7 @@ void buzzer() {
 //Função para enviar uma mensagem para o arduino mega 
 //(responsável pelo controle dos motores)
 void enviaIC2() {
-  Serial.println("enviando");
+  Serial.println("enviando prar o receptor_secundario");
   //constroi-se o pacote de dados montando um inteiro
   //de 2 bytes, sendo cada byte formado pelo comando
   //e por um valor associado:
@@ -139,11 +139,13 @@ void enviaIC2() {
   //Serial.println(dados.cmd);
   //Serial.println(dados.valor);
 
+  LED_COMUNICACAO.setOn();
   String pacote_ic2 = String(valor_pacote);
   Wire.beginTransmission(RECEPTOR_SECUNDARIO_ADDR);
   for (int x = 0; x < 4; x++) {
     Wire.write(pacote_ic2.charAt(x));
   }
+  LED_COMUNICACAO.setOff();
   //Serial.println(pacote_ic2);
   Wire.endTransmission();
 }
@@ -220,6 +222,14 @@ void loop()
             break;
   
           case 9: //trava motores
+            enviaIC2();
+            break;
+
+          case 10: //habilita controle de estabilizacao
+            enviaIC2();
+            break;
+            
+          case 20: //desabilita controle de estabilizacao
             enviaIC2();
             break;
         }

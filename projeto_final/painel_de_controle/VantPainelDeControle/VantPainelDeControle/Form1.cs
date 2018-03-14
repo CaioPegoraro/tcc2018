@@ -19,6 +19,7 @@ namespace VantPainelDeControle
         int pacote_recebido;
         int status_buzzer = 0;
         int status_motores = 0;
+        int status_controle = 0;
 
         public Form1()
         {
@@ -110,7 +111,7 @@ namespace VantPainelDeControle
                     
                     //habilita os demais modulos do controlador para uso
                     this.btnConexaoRemota.Enabled = true;
-                    this.btnPilotoAuto.Enabled = true;
+                    this.btnEstabAuto.Enabled = true;
                     this.btnBuzzer.Enabled = true;
                     this.btnLiberarMotores.Enabled = true;
 
@@ -871,6 +872,53 @@ namespace VantPainelDeControle
         private void btnPousar_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnEstabAuto_Click(object sender, EventArgs e)
+        {
+            // 10 # Habilitar estabilizador automatico
+            // retorno: nao
+            // valor: não
+
+            // cmd = 0010
+            //valor = 0000
+            //                        cmd  valor
+
+            if (status_controle == 0)
+            {
+                byte[] data = new byte[] { 10, 0 };
+
+                if (serialPort1.IsOpen == true)
+                {//porta está aberta
+                    serialPort1.Write(data, 0, 2); //escreve o vetor de 2 bytes na saida serial
+
+                }
+                textBoxReceber.AppendText("\n\n == Comando enviado >> \n");
+                textBoxReceber.AppendText("cmd: 0010 \n");
+                textBoxReceber.AppendText("valor: 0000 \n\n");
+                this.status_controle = 1;
+
+                this.lblStatusAutomatico.Text = "ON";
+                this.lblStatusAutomatico.ForeColor = System.Drawing.Color.Green;
+            }
+            else
+            {
+                byte[] data = new byte[] { 20, 0 };
+
+                if (serialPort1.IsOpen == true)
+                {//porta está aberta
+                    serialPort1.Write(data, 0, 2); //escreve o vetor de 2 bytes na saida serial
+
+                }
+                textBoxReceber.AppendText("\n\n == Comando enviado >> \n");
+                textBoxReceber.AppendText("cmd: 0020 \n");
+                textBoxReceber.AppendText("valor: 0000 \n\n");
+                this.status_controle = 0;
+
+                this.lblStatusAutomatico.Text = "OFF";
+                this.lblStatusAutomatico.ForeColor = System.Drawing.Color.Red;
+            }
+            
         }
     }
 }
