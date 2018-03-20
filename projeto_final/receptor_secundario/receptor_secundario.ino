@@ -36,6 +36,7 @@ Led LED_MPU(8);
 LiquidCrystal_I2C lcd(0x27,16,2);
 unsigned long pMillis = 0;
 const long intervalo = 150; //ms
+boolean escrever_idle=true;
 
 /////////// VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////////
 
@@ -108,6 +109,17 @@ void TesteLeds(){
   delay(500);
 }
 
+void calibrar_motores(){
+  motor1.write(65);
+  motor2.write(65);
+  motor3.write(65);
+  motor4.write(65);
+  delay(2);
+ 
+  //Serial.println("calibrando");
+  flag_calibrar = 0;  
+}
+
 void setup() {
 
   TesteLeds();
@@ -126,7 +138,7 @@ void setup() {
   lcd.init(); //initialize the lcd
   lcd.backlight(); //open the backlight 
   lcd.setCursor(0,0);
-  lcd.print("ANGULO:");
+  lcd.print("ANGULO: idle       ");
   lcd.setCursor(0,1);
   lcd.print("=VANT INICIADO=");
   
@@ -159,14 +171,11 @@ void setup() {
   dados.valor = 0;
 
   //Calibracao dos motores
-
-
-  motor1.writeMicroseconds(1000);
+/* motor1.writeMicroseconds(1000);
   motor2.writeMicroseconds(1000);
   motor3.writeMicroseconds(1000);
   motor4.writeMicroseconds(1000);
-  
-  /*
+  */
   motor1.writeMicroseconds(2100);
   motor2.writeMicroseconds(2100);
   motor3.writeMicroseconds(2100);
@@ -196,27 +205,18 @@ void setup() {
   motor3.writeMicroseconds(65);
   motor4.writeMicroseconds(65);
   delay(2);
-  */
-}
-
-void escreve_lcd(String tmp){
-  lcd.setBacklight(HIGH);
-  lcd.setCursor(0,0);
-  lcd.print(tmp);
-  //lcd.setCursor(0,1);
-  //lcd.print("TCC UFSCAR");
-  delay(1000);
+  
+  calibrar_motores();
 }
 
 void escreve_angulo_lcd(float angulo){
   lcd.setCursor(8,0);
-  lcd.print("        "); //clear
+  lcd.print("         "); //clear
   lcd.setCursor(8,0);
   lcd.print(angulo,3);
 }
 
 void loop() {
-
   //Loop: realiza operacoes de calibracao nos motores (constitui uma das acoes criticas de seguranca para evitar casos em que
   //      os motores hajam de maneira inapropriada (operando em velocidade maxima sem controle por exemplo).
 
@@ -238,12 +238,12 @@ void loop() {
     error = angulo_y - desired_angle;
     //Serial.println(error);
 
-    //exibe o angulo atual no lcd
+    //exibe o angulo atual no lcd 
     if (time - pMillis >= intervalo) {
       escreve_angulo_lcd(angulo_y);
       pMillis = time;
     }
-    
+
     pid_p = kp*error;
     
     if(-3 < error <3){
@@ -289,33 +289,30 @@ void loop() {
     Serial.print(" | pwmRight: ");
     Serial.println(pwmRight);
 
-/*
+
     motor1.writeMicroseconds(pwmLeft);
     motor3.writeMicroseconds(pwmLeft);
     motor2.writeMicroseconds(pwmRight);
     motor4.writeMicroseconds(pwmRight);
-*/
-    //motor3.writeMicroseconds(pwmLeft);
-    //motor4.writeMicroseconds(pwmRight);
+/*
+    motor3.writeMicroseconds(pwmLeft);
+    motor4.writeMicroseconds(pwmRight);
+ */
  
     previous_error = error; 
     LED_CONTROLE.setOff();
   }
-
+  
   //flag de calibrar: indica a prioridade da operacao de calibacao (mantendo os motores na velocidade minima/desligados)
   //flag de ok: se for 0 indica que nao houve comandos que utilizam os motores do drone
   if (flag_calibrar == 1 || flag_ok == 0) {
     //calibrar motores
-
-    //Serial.println("calibrando");
-    flag_calibrar = 0;
-
-    motor1.writeMicroseconds(1000);
-    motor2.writeMicroseconds(1000);
-    motor3.writeMicroseconds(1000);
-    motor4.writeMicroseconds(1000);
-    delay(2);
-
+    lcd.setCursor(0,0);
+    lcd.print("ANGULO: idle       ");
+    delay(100);
+    calibrar_motores();
+    LED_CONTROLE.setOff();
+    flag_calibrar=0;
   }
     
   //flag de operacao: indica execucao de algum comando que
@@ -419,12 +416,10 @@ void msgReceptorPrimario(int howMany) {
     //desabilita rotina de controle automatico
     flag_controle=0;
     flag_calibrar = 1;
-    lcd.setCursor(8,0);
-    lcd.print("        "); //clear
-  }
+   }
   //Serial.println(dados.cmd);
   //Serial.println(dados.valor);
- LED_CONTROLE.setOff();
 }
+
 
 
