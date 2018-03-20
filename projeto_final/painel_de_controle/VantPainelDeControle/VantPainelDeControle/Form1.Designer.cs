@@ -35,7 +35,6 @@
             this.btnCalibrarMotores = new System.Windows.Forms.GroupBox();
             this.btnCalibrar = new System.Windows.Forms.Button();
             this.btnSubir = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
@@ -134,7 +133,6 @@
             // 
             this.btnCalibrarMotores.Controls.Add(this.btnCalibrar);
             this.btnCalibrarMotores.Controls.Add(this.btnSubir);
-            this.btnCalibrarMotores.Controls.Add(this.label3);
             this.btnCalibrarMotores.Controls.Add(this.label2);
             this.btnCalibrarMotores.Controls.Add(this.button8);
             this.btnCalibrarMotores.Controls.Add(this.button7);
@@ -174,15 +172,6 @@
             this.btnSubir.Text = "Subir";
             this.btnSubir.UseVisualStyleBackColor = true;
             this.btnSubir.Click += new System.EventHandler(this.btnSubir_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(199, 418);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "[TRAZEIRA]";
             // 
             // label2
             // 
@@ -320,7 +309,7 @@
             this.txtVelocidadeTotal.Name = "txtVelocidadeTotal";
             this.txtVelocidadeTotal.Size = new System.Drawing.Size(75, 20);
             this.txtVelocidadeTotal.TabIndex = 0;
-            this.txtVelocidadeTotal.Text = "65";
+            this.txtVelocidadeTotal.Text = "100";
             this.txtVelocidadeTotal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnConexaoRemota
@@ -730,7 +719,7 @@
             this.lblM4.Name = "lblM4";
             this.lblM4.Size = new System.Drawing.Size(67, 20);
             this.lblM4.TabIndex = 18;
-            this.lblM4.Text = "65";
+            this.lblM4.Text = "100";
             this.lblM4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label6
@@ -748,7 +737,7 @@
             this.lblM3.Name = "lblM3";
             this.lblM3.Size = new System.Drawing.Size(67, 20);
             this.lblM3.TabIndex = 16;
-            this.lblM3.Text = "65";
+            this.lblM3.Text = "100";
             this.lblM3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label5
@@ -766,7 +755,7 @@
             this.lblM2.Name = "lblM2";
             this.lblM2.Size = new System.Drawing.Size(67, 20);
             this.lblM2.TabIndex = 14;
-            this.lblM2.Text = "65";
+            this.lblM2.Text = "100";
             this.lblM2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label4
@@ -784,7 +773,7 @@
             this.lblM1.Name = "lblM1";
             this.lblM1.Size = new System.Drawing.Size(67, 20);
             this.lblM1.TabIndex = 10;
-            this.lblM1.Text = "65";
+            this.lblM1.Text = "100";
             this.lblM1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblStatusConexao
@@ -935,7 +924,6 @@
         private System.Windows.Forms.Button btConectar;
         private System.Windows.Forms.GroupBox btnCalibrarMotores;
         private System.Windows.Forms.Button btnConexaoRemota;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;

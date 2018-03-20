@@ -815,7 +815,7 @@ void calibrate_sensors() {
   //Serial.println("Finishing Calibration");
 }
 
-void calcular_angulo(){
+float calcular_angulo(){
   int error;
   double dT;
   accel_t_gyro_union accel_t_gyro;
@@ -934,17 +934,21 @@ void calcular_angulo(){
   Serial.print(F(","));
   Serial.print(unfiltered_gyro_angle_z, 2);
   */
+
   
-  Serial.print(F(" #FIL ANGLE: "));             //Filtered angle
+/*  Serial.print(F(" #FIL ANGLE: "));             //Angulo filtrado de saida
   Serial.print(angle_x, 2);
   Serial.print(F(","));
   Serial.print(angle_y, 2);
   Serial.print(F(","));
   Serial.print(angle_z, 2);
   Serial.println(F(""));
-  
+  */
+ 
   // Delay so we don't swamp the serial port
   delay(5);
+
+  return angle_y;
 }
 
 

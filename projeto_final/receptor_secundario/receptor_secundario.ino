@@ -1,8 +1,7 @@
-#include <Wire.h>
-#include <Servo.h>
-
 //Bibliotecas globais
 #include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
 
 //Bibliotecas locais
 #include "Pacote.h"
@@ -26,16 +25,42 @@ Servo motor4; //tras direita
 int flag_calibrar = 0; //solicita operacao de calibracao dos motores
 int flag_operacao = 0; //solicita o tratamento de comando sobre os motores
 int flag_ok = 0; //habilita operacao sobre os motores
-int flag_controle =0; //ativa o processo de controle de estabilizacao
+int flag_controle = 0; //ativa o processo de controle de estabilizacao
 
 //Leds de controle
 Led LED_MOTOR(9);
 Led LED_CONTROLE(11);
 Led LED_MPU(8);
 
-/////////// SISTEMAS DE CONTROLE ///////////
+//LCD
+LiquidCrystal_I2C lcd(0x27,16,2);
+unsigned long pMillis = 0;
+const long intervalo = 150; //ms
+
+/////////// VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////////
 
 //[1] -> PID: Controle de estabilizacao automatico//
+float elapsedTime, time, timePrev;
+
+float angulo_y;
+float PID, pwmLeft, pwmRight, error, previous_error;
+float pid_p=0;
+float pid_i=0;
+float pid_d=0;
+
+double kp=1.55;//3.55
+double ki=0.005;//0.003
+double kd=1.05;//2.05
+
+double throttle=1300; 
+float desired_angle = 0;
+/// FIM VARIAVEIS PID //
+
+//[2] -> Manual: estabilização manual //
+
+/// FIM VARIAVEIS MANUAIS ///
+
+/////////// FIM DAS VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////
 
 //Velocidades: A velocidade de cada motor eh definida por dois fatores:
 //I: O emissor envia um valor base para o motor, no qual podemos controlar a altura do drone, ja
@@ -86,10 +111,25 @@ void TesteLeds(){
 void setup() {
 
   TesteLeds();
-
   Serial.begin(9600);
+
+  ///// SETUP VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////
   
+  ///[1] -> PID ///
+  time = millis();
+
+  ///[2] -> Manual ///
+
   //////////////////////////////////////////////////////////////
+
+  //LCD
+  lcd.init(); //initialize the lcd
+  lcd.backlight(); //open the backlight 
+  lcd.setCursor(0,0);
+  lcd.print("ANGULO:");
+  lcd.setCursor(0,1);
+  lcd.print("=VANT INICIADO=");
+  
   ///MPU5060
   Serial.println("INICIALIZANDO MPU");
   int error;
@@ -119,6 +159,14 @@ void setup() {
   dados.valor = 0;
 
   //Calibracao dos motores
+
+
+  motor1.writeMicroseconds(1000);
+  motor2.writeMicroseconds(1000);
+  motor3.writeMicroseconds(1000);
+  motor4.writeMicroseconds(1000);
+  
+  /*
   motor1.writeMicroseconds(2100);
   motor2.writeMicroseconds(2100);
   motor3.writeMicroseconds(2100);
@@ -143,27 +191,114 @@ void setup() {
   motor4.writeMicroseconds(2100);
   delay(2);
 
-  motor1.write(65);
-  motor2.write(65);
-  motor3.write(65);
-  motor4.write(65);
+  motor1.writeMicroseconds(65);
+  motor2.writeMicroseconds(65);
+  motor3.writeMicroseconds(65);
+  motor4.writeMicroseconds(65);
   delay(2);
+  */
+}
+
+void escreve_lcd(String tmp){
+  lcd.setBacklight(HIGH);
+  lcd.setCursor(0,0);
+  lcd.print(tmp);
+  //lcd.setCursor(0,1);
+  //lcd.print("TCC UFSCAR");
+  delay(1000);
+}
+
+void escreve_angulo_lcd(float angulo){
+  lcd.setCursor(8,0);
+  lcd.print("        "); //clear
+  lcd.setCursor(8,0);
+  lcd.print(angulo,3);
 }
 
 void loop() {
 
-  //Loop: realiza operacÃƒÂµes de calibracao nos motores (constitui uma das acÃƒÂµes criticas de seguranca para evitar casos em que
+  //Loop: realiza operacoes de calibracao nos motores (constitui uma das acoes criticas de seguranca para evitar casos em que
   //      os motores hajam de maneira inapropriada (operando em velocidade maxima sem controle por exemplo).
 
   //Antes de destravar os motores o loop fica executando a calibracao dos motores, quando se libera os motores essa operacao sera
   //executada apenas quando enviado um comando pelo painel de controle.
-  //Ao liberar os motores a operacao padrÃƒÂ£o sera o controle de estabilidade realizado pelo PID utilizando os valores do acelerÃƒÂ´metro.
-  //intercalado a essa operacao seram executados operacÃƒÂµes de controle manual (controlado pelo painel de controle).
+  //Ao liberar os motores a operacao padrao sera o controle de estabilidade realizado pelo PID utilizando os valores do acelerometro.
+  //intercalado a essa operacao seram executados operacoes de controle manual (controlado pelo painel de controle).
 
   //Operacao de estabilizacao do VANT
   if(flag_controle==1){
     LED_CONTROLE.setOn();
-    calcular_angulo();
+    
+    //ALGORITMO DE CONTROLE 1: PID
+    timePrev = time;  // the previous time is stored before the actual time read
+    time = millis();  // actual time read
+    elapsedTime = (time - timePrev) / 1000; 
+
+    angulo_y = calcular_angulo();
+    error = angulo_y - desired_angle;
+    //Serial.println(error);
+
+    //exibe o angulo atual no lcd
+    if (time - pMillis >= intervalo) {
+      escreve_angulo_lcd(angulo_y);
+      pMillis = time;
+    }
+    
+    pid_p = kp*error;
+    
+    if(-3 < error <3){
+      pid_i = pid_i+(ki*error);  
+    }
+
+    pid_d = kd*((error - previous_error)/elapsedTime);
+
+    PID = pid_p + pid_i + pid_d;
+
+    if(PID < -1000)
+    {
+      PID=-1000;
+    }
+    if(PID > 1000)
+    {
+      PID=1000;
+    }
+
+    pwmLeft = throttle - PID;
+    pwmRight = throttle + PID;
+
+    if(pwmRight < 1000)
+    {
+      pwmRight= 1000;
+    }
+    if(pwmRight > 2000)
+    {
+      pwmRight=2000;
+    }
+    //Left
+    if(pwmLeft < 1000)
+    {
+      pwmLeft= 1000;
+    }
+    if(pwmLeft > 2000)
+    {
+      pwmLeft=2000;
+    }
+
+    Serial.print(">> pwmLeft: ");
+    Serial.print(pwmLeft);
+    Serial.print(" | pwmRight: ");
+    Serial.println(pwmRight);
+
+/*
+    motor1.writeMicroseconds(pwmLeft);
+    motor3.writeMicroseconds(pwmLeft);
+    motor2.writeMicroseconds(pwmRight);
+    motor4.writeMicroseconds(pwmRight);
+*/
+    //motor3.writeMicroseconds(pwmLeft);
+    //motor4.writeMicroseconds(pwmRight);
+ 
+    previous_error = error; 
     LED_CONTROLE.setOff();
   }
 
@@ -175,14 +310,14 @@ void loop() {
     //Serial.println("calibrando");
     flag_calibrar = 0;
 
-    motor1.write(65);
-    motor2.write(65);
-    motor3.write(65);
-    motor4.write(65);
+    motor1.writeMicroseconds(1000);
+    motor2.writeMicroseconds(1000);
+    motor3.writeMicroseconds(1000);
+    motor4.writeMicroseconds(1000);
     delay(2);
 
   }
-  
+    
   //flag de operacao: indica execucao de algum comando que
   //utiliza algum dos motores
   //flag de ok: indica que os motores estao liberados por software
@@ -190,34 +325,37 @@ void loop() {
     //nao precisa calibrar, entao vai processar a operacao dos motores
     flag_operacao = 0; //a flag eh valida para uma operacao
 
-    if (dados.valor < 180 && dados.valor > 60) {
-      //faixa de operacao dos motores
+    if (dados.valor <= 200 && dados.valor >= 100) {
+      //Operacao dos motores: valores entre 1000us ate 2000us
 
+      dados.valor = dados.valor*10;
+      
       switch (dados.cmd) {
 
         case 1:
-          //Serial.println("acionando motor 1");
-          motor1.write(dados.valor);
+          Serial.println("acionando motor 1");
+          motor1.writeMicroseconds(dados.valor);
           break;
         case 2:
-          //Serial.println("acionando motor 2");
-          motor2.write(dados.valor);
+          Serial.println("acionando motor 2");
+          motor2.writeMicroseconds(dados.valor);
           break;
         case 3:
-          //Serial.println("acionando motor 3");
-          motor3.write(dados.valor);
+          Serial.println("acionando motor 3");
+          motor3.writeMicroseconds(dados.valor);
           break;
         case 4:
-          //Serial.println("acionando motor 4");
-          motor4.write(dados.valor);
+          Serial.print("acionando motor 4: ");
+          Serial.println(dados.valor);
+          motor4.writeMicroseconds(dados.valor);
           break;
 
         case 6:
           //Serial.println("acionando todos os motores");
-            motor1.write(dados.valor);
-            motor2.write(dados.valor);
-            motor3.write(dados.valor);
-            motor4.write(dados.valor);
+            motor1.writeMicroseconds(dados.valor);
+            motor2.writeMicroseconds(dados.valor);
+            motor3.writeMicroseconds(dados.valor);
+            motor4.writeMicroseconds(dados.valor);
           //Serial.println(dados.valor);
           delay(15);
           break;
@@ -274,10 +412,15 @@ void msgReceptorPrimario(int howMany) {
     LED_MOTOR.setOff();
   }
   else if(dados.cmd ==10){
+    //habilita rotina de controle automatico
     flag_controle=1;
   }
   else if(dados.cmd ==20){
+    //desabilita rotina de controle automatico
     flag_controle=0;
+    flag_calibrar = 1;
+    lcd.setCursor(8,0);
+    lcd.print("        "); //clear
   }
   //Serial.println(dados.cmd);
   //Serial.println(dados.valor);
