@@ -792,7 +792,7 @@ namespace VantPainelDeControle
 
             //envia valor para parar o motor4
 
-            int numero = 65;
+            int numero = 100;
             txtVelocidadeTotal.Text = (numero).ToString();
 
             //                        cmd  valor

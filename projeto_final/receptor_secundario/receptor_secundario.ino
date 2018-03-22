@@ -41,17 +41,17 @@ boolean escrever_idle=true;
 /////////// VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////////
 
 //[1] -> PID: Controle de estabilizacao automatico//
-float elapsedTime, time, timePrev;
+float tempoGasto, time, tempoAnterior;
 
 float angulo_y;
-float PID, pwmLeft, pwmRight, error, previous_error;
+float PID, intensidade_esquerda, intensidade_direita, erro, erro_anterior;
 float pid_p=0;
 float pid_i=0;
 float pid_d=0;
 
-double kp=1.55;//3.55
-double ki=0.005;//0.003
-double kd=1.05;//2.05
+double kp=1.2;//3.55
+double ki=0.01;//0.003
+double kd=0.6;//2.05
 
 double throttle=1300; 
 float desired_angle = 0;
@@ -216,6 +216,26 @@ void escreve_angulo_lcd(float angulo){
   lcd.print(angulo,3);
 }
 
+void motor(int m, float velo){
+
+  if(velo<=1500){
+    switch (m){
+      case 1:
+        motor1.writeMicroseconds(velo);
+        break;
+      case 2:
+        motor2.writeMicroseconds(velo);
+        break;
+      case 3:
+        motor3.writeMicroseconds(velo+7);
+        break;
+      case 4:
+        motor4.writeMicroseconds(velo+2);
+        break;
+    }
+  }
+}
+
 void loop() {
   //Loop: realiza operacoes de calibracao nos motores (constitui uma das acoes criticas de seguranca para evitar casos em que
   //      os motores hajam de maneira inapropriada (operando em velocidade maxima sem controle por exemplo).
@@ -230,13 +250,13 @@ void loop() {
     LED_CONTROLE.setOn();
     
     //ALGORITMO DE CONTROLE 1: PID
-    timePrev = time;  // the previous time is stored before the actual time read
+    tempoAnterior = time;  // the previous time is stored before the actual time read
     time = millis();  // actual time read
-    elapsedTime = (time - timePrev) / 1000; 
+    tempoGasto = (time - tempoAnterior) / 1000; 
 
     angulo_y = calcular_angulo();
-    error = angulo_y - desired_angle;
-    //Serial.println(error);
+    erro = angulo_y - desired_angle;
+    Serial.println(angulo_y);
 
     //exibe o angulo atual no lcd 
     if (time - pMillis >= intervalo) {
@@ -244,13 +264,13 @@ void loop() {
       pMillis = time;
     }
 
-    pid_p = kp*error;
+    pid_p = kp*erro;
     
-    if(-3 < error <3){
-      pid_i = pid_i+(ki*error);  
+    if(-3 < erro <3){
+      pid_i = pid_i+(ki*erro);  
     }
 
-    pid_d = kd*((error - previous_error)/elapsedTime);
+    pid_d = kd*((erro - erro_anterior)/tempoGasto);
 
     PID = pid_p + pid_i + pid_d;
 
@@ -263,43 +283,47 @@ void loop() {
       PID=1000;
     }
 
-    pwmLeft = throttle - PID;
-    pwmRight = throttle + PID;
+    intensidade_esquerda = throttle - PID;
+    intensidade_direita = throttle + PID;
 
-    if(pwmRight < 1000)
+    if(intensidade_direita < 1000)
     {
-      pwmRight= 1000;
+      intensidade_direita= 1000;
     }
-    if(pwmRight > 2000)
+    if(intensidade_direita > 1500)
     {
-      pwmRight=2000;
+      intensidade_direita=1500;
     }
     //Left
-    if(pwmLeft < 1000)
+    if(intensidade_esquerda < 1000)
     {
-      pwmLeft= 1000;
+      intensidade_esquerda= 1000;
     }
-    if(pwmLeft > 2000)
+    if(intensidade_esquerda > 1500)
     {
-      pwmLeft=2000;
+      intensidade_esquerda=1500;
     }
 
-    Serial.print(">> pwmLeft: ");
-    Serial.print(pwmLeft);
-    Serial.print(" | pwmRight: ");
-    Serial.println(pwmRight);
-
-
-    motor1.writeMicroseconds(pwmLeft);
-    motor3.writeMicroseconds(pwmLeft);
-    motor2.writeMicroseconds(pwmRight);
-    motor4.writeMicroseconds(pwmRight);
+ /*   Serial.print(">> intensidade_esquerda: ");
+    Serial.print(intensidade_esquerda);
+    Serial.print(" | intensidade_direita: ");
+    Serial.println(intensidade_direita);
+*/
 /*
-    motor3.writeMicroseconds(pwmLeft);
-    motor4.writeMicroseconds(pwmRight);
+    motor1.writeMicroseconds(intensidade_esquerda-40);
+    motor3.writeMicroseconds(intensidade_esquerda);
+    motor2.writeMicroseconds(intensidade_direita-40);
+    motor4.writeMicroseconds(intensidade_direita);
+/*
+    motor3.writeMicroseconds(intensidade_esquerda);
+    motor4.writeMicroseconds(intensidade_direita);
  */
+    motor(1,intensidade_esquerda);
+    motor(3,intensidade_esquerda);
+    motor(2,intensidade_direita);
+    motor(4,intensidade_direita);
  
-    previous_error = error; 
+    erro_anterior = erro; 
     LED_CONTROLE.setOff();
   }
   
@@ -330,20 +354,20 @@ void loop() {
       switch (dados.cmd) {
 
         case 1:
-          Serial.println("acionando motor 1");
+          //Serial.println("acionando motor 1");
           motor1.writeMicroseconds(dados.valor);
           break;
         case 2:
-          Serial.println("acionando motor 2");
+          //Serial.println("acionando motor 2");
           motor2.writeMicroseconds(dados.valor);
           break;
         case 3:
-          Serial.println("acionando motor 3");
+          //Serial.println("acionando motor 3");
           motor3.writeMicroseconds(dados.valor);
           break;
         case 4:
-          Serial.print("acionando motor 4: ");
-          Serial.println(dados.valor);
+          //Serial.print("acionando motor 4: ");
+          //Serial.println(dados.valor);
           motor4.writeMicroseconds(dados.valor);
           break;
 
