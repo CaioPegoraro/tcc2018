@@ -1,4 +1,4 @@
-//Este cÃ³digo foi produzido por "Krodal"
+//Este codigo foi produzido por "Krodal"
 
 // MPU-6050 Accelerometer + Gyro
 // -----------------------------
