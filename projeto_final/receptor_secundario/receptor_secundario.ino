@@ -218,7 +218,7 @@ void escreve_angulo_lcd(float angulo){
 
 void motor(int m, float velo){
 
-  if(velo<=1500){
+  if(velo<=1400){
     switch (m){
       case 1:
         motor1.writeMicroseconds(velo);
@@ -255,76 +255,88 @@ void loop() {
     tempoGasto = (time - tempoAnterior) / 1000; 
 
     angulo_y = calcular_angulo();
-    erro = angulo_y - desired_angle;
-    Serial.println(angulo_y);
 
-    //exibe o angulo atual no lcd 
-    if (time - pMillis >= intervalo) {
-      escreve_angulo_lcd(angulo_y);
-      pMillis = time;
+    if((angulo_y > 50) || (angulo_y <-50)){
+      //erro na leitura
+      flag_controle=0;
+      lcd.setCursor(0,0);
+      lcd.print("ERRO DE LEITURA MPU");
+      lcd.setCursor(1,0);
+      lcd.print("Reinicie...");
     }
-
-    pid_p = kp*erro;
-    
-    if(-3 < erro <3){
-      pid_i = pid_i+(ki*erro);  
+    else{
+      erro = angulo_y - desired_angle;
+      Serial.println(angulo_y);
+  
+      //exibe o angulo atual no lcd 
+      if (time - pMillis >= intervalo) {
+        escreve_angulo_lcd(angulo_y);
+        pMillis = time;
+      }
+  
+      pid_p = kp*erro;
+      
+      if(-3 < erro <3){
+        pid_i = pid_i+(ki*erro);  
+      }
+  
+      pid_d = kd*((erro - erro_anterior)/tempoGasto);
+  
+      PID = pid_p + pid_i + pid_d;
+  
+      if(PID < -1000)
+      {
+        PID=-1000;
+      }
+      if(PID > 1000)
+      {
+        PID=1000;
+      }
+  
+      intensidade_esquerda = throttle - PID;
+      intensidade_direita = throttle + PID;
+  
+      if(intensidade_direita < 1000)
+      {
+        intensidade_direita= 1000;
+      }
+      if(intensidade_direita > 1500)
+      {
+        intensidade_direita=1500;
+      }
+      //Left
+      if(intensidade_esquerda < 1000)
+      {
+        intensidade_esquerda= 1000;
+      }
+      if(intensidade_esquerda > 1500)
+      {
+        intensidade_esquerda=1500;
+      }
+  
+   /*   Serial.print(">> intensidade_esquerda: ");
+      Serial.print(intensidade_esquerda);
+      Serial.print(" | intensidade_direita: ");
+      Serial.println(intensidade_direita);
+  */
+  /*
+      motor1.writeMicroseconds(intensidade_esquerda-40);
+      motor3.writeMicroseconds(intensidade_esquerda);
+      motor2.writeMicroseconds(intensidade_direita-40);
+      motor4.writeMicroseconds(intensidade_direita);
+  /*
+      motor3.writeMicroseconds(intensidade_esquerda);
+      motor4.writeMicroseconds(intensidade_direita);
+   */
+   
+      motor(1,intensidade_esquerda);
+      motor(3,intensidade_esquerda);
+      motor(2,intensidade_direita);
+      motor(4,intensidade_direita);
+   
+      erro_anterior = erro; 
+      LED_CONTROLE.setOff();
     }
-
-    pid_d = kd*((erro - erro_anterior)/tempoGasto);
-
-    PID = pid_p + pid_i + pid_d;
-
-    if(PID < -1000)
-    {
-      PID=-1000;
-    }
-    if(PID > 1000)
-    {
-      PID=1000;
-    }
-
-    intensidade_esquerda = throttle - PID;
-    intensidade_direita = throttle + PID;
-
-    if(intensidade_direita < 1000)
-    {
-      intensidade_direita= 1000;
-    }
-    if(intensidade_direita > 1500)
-    {
-      intensidade_direita=1500;
-    }
-    //Left
-    if(intensidade_esquerda < 1000)
-    {
-      intensidade_esquerda= 1000;
-    }
-    if(intensidade_esquerda > 1500)
-    {
-      intensidade_esquerda=1500;
-    }
-
- /*   Serial.print(">> intensidade_esquerda: ");
-    Serial.print(intensidade_esquerda);
-    Serial.print(" | intensidade_direita: ");
-    Serial.println(intensidade_direita);
-*/
-/*
-    motor1.writeMicroseconds(intensidade_esquerda-40);
-    motor3.writeMicroseconds(intensidade_esquerda);
-    motor2.writeMicroseconds(intensidade_direita-40);
-    motor4.writeMicroseconds(intensidade_direita);
-/*
-    motor3.writeMicroseconds(intensidade_esquerda);
-    motor4.writeMicroseconds(intensidade_direita);
- */
-    motor(1,intensidade_esquerda);
-    motor(3,intensidade_esquerda);
-    motor(2,intensidade_direita);
-    motor(4,intensidade_direita);
- 
-    erro_anterior = erro; 
-    LED_CONTROLE.setOff();
   }
   
   //flag de calibrar: indica a prioridade da operacao de calibacao (mantendo os motores na velocidade minima/desligados)
