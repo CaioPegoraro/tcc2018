@@ -15,7 +15,7 @@ namespace leitor_serial
     public partial class Form1 : Form
     {
         string RxString;
-        int pacote_recebido;
+        double pacote_recebido;
         DateTime tempoInicio, tempoLeitura;
 
         public Form1()
@@ -78,31 +78,28 @@ namespace leitor_serial
             //Um dado recebido é composto por um cmd (comando) e um valor associado.
             //dessa forma é possível examinar qual ação tomar sem ter salvo o comando enviado anteriormente
 
-            //textBoxReceber.AppendText(RxString + "\n");
-            int cmd = pacote_recebido / 100000;
-            int valor = pacote_recebido - cmd * 100000;
-
             //Console.WriteLine("pct_recebido: " + pacote_recebido);
             //Console.WriteLine(cmd);
             //Console.WriteLine(valor);
+            pacote_recebido = pacote_recebido / 100;
 
             textBoxReceber.AppendText("\n\n == Recebido pacote << \n");
             textBoxReceber.AppendText("cmd: " + pacote_recebido.ToString() + "\n");
 
             TimeSpan span = this.tempoLeitura - this.tempoInicio;
-            int ms = (int)span.TotalSeconds;
+            double s = span.TotalSeconds;
 
-            this.dataGridView1.Rows.Add(ms, pacote_recebido);
+            this.dataGridView1.Rows.Add(s, pacote_recebido);
             tempoLeitura = DateTime.Now;
+            dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void porta_serial_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             //dados recebidos
-            RxString = serialPort1.ReadLine();              //le o dado disponível na serialx
-            pacote_recebido = Int32.Parse(RxString);
-            this.Invoke(new EventHandler(trataDadoRecebido));   //chama outra thread para escrever o dado no text box
-
+                RxString = serialPort1.ReadLine();              //le o dado disponível na serialx
+                pacote_recebido = double.Parse(RxString);
+                this.Invoke(new EventHandler(trataDadoRecebido));   //chama outra thread para escrever o dado no text box
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -127,7 +124,6 @@ namespace leitor_serial
                 catch
                 {
                     return;
-
                 }
                 if (serialPort1.IsOpen)
                 {

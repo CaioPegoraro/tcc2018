@@ -185,10 +185,6 @@ void loop() {
             Serial.println(dados.cmd * 100000 + dados.valor);
             LED_CONEXAO.setOn();
             break;
-
-          case 126: //leitura valor da bateria
-            Serial.println(dados.cmd * 100000 + dados.valor);
-            break;
         }
         LED_COMUNICACAO.setOff();
       }

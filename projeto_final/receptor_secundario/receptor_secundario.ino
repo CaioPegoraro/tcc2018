@@ -42,6 +42,7 @@ boolean escrever_idle=true;
 
 //[1] -> PID: Controle de estabilizacao automatico//
 float tempoGasto, time, tempoAnterior;
+bool inicio_processo=true;
 
 float angulo_y;
 float PID, intensidade_esquerda, intensidade_direita, erro, erro_anterior;
@@ -123,7 +124,7 @@ void calibrar_motores(){
 void setup() {
 
   TesteLeds();
-  Serial.begin(9600);
+  Serial.begin(57600);
 
   ///// SETUP VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////
   
@@ -143,7 +144,7 @@ void setup() {
   lcd.print("=VANT INICIADO=");
   
   ///MPU5060
-  Serial.println("INICIALIZANDO MPU");
+  //Serial.println("INICIALIZANDO MPU");
   int error;
   uint8_t c;
   Wire.begin(RECEPTOR_SECUNDARIO_ADDR);
@@ -164,7 +165,6 @@ void setup() {
   //Configuracao comunicacao IC2:
   //Wire.begin(RECEPTOR_SECUNDARIO_ADDR);
   Wire.onReceive(msgReceptorPrimario);
-  Serial.begin(9600);
   Serial.setTimeout(50);
 
   //Variaveis de controle inicializacao:
@@ -248,11 +248,16 @@ void loop() {
   //Operacao de estabilizacao do VANT
   if(flag_controle==1){
     LED_CONTROLE.setOn();
-    
+
     //ALGORITMO DE CONTROLE 1: PID
-    tempoAnterior = time;  // the previous time is stored before the actual time read
-    time = millis();  // actual time read
+    tempoAnterior = time;  //valor do instante te tempo anterior
+    time = millis();  //leitura do instante de tempo atual
     tempoGasto = (time - tempoAnterior) / 1000; 
+
+    if(inicio_processo==true){
+      inicio_processo=false;
+      tempoGasto=0;
+    }
 
     angulo_y = calcular_angulo();
 
@@ -266,10 +271,10 @@ void loop() {
     }
     else{
       erro = angulo_y - desired_angle;
-      Serial.println(angulo_y);
-  
+     
       //exibe o angulo atual no lcd 
       if (time - pMillis >= intervalo) {
+        Serial.println(angulo_y);
         escreve_angulo_lcd(angulo_y);
         pMillis = time;
       }
@@ -300,18 +305,18 @@ void loop() {
       {
         intensidade_direita= 1000;
       }
-      if(intensidade_direita > 1500)
+      if(intensidade_direita > 1400)
       {
-        intensidade_direita=1500;
+        intensidade_direita=1400;
       }
       //Left
       if(intensidade_esquerda < 1000)
       {
         intensidade_esquerda= 1000;
       }
-      if(intensidade_esquerda > 1500)
+      if(intensidade_esquerda > 1400)
       {
-        intensidade_esquerda=1500;
+        intensidade_esquerda=1400;
       }
   
    /*   Serial.print(">> intensidade_esquerda: ");
@@ -452,6 +457,7 @@ void msgReceptorPrimario(int howMany) {
     //desabilita rotina de controle automatico
     flag_controle=0;
     flag_calibrar = 1;
+    inicio_processo=true;
    }
   //Serial.println(dados.cmd);
   //Serial.println(dados.valor);

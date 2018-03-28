@@ -8,3 +8,13 @@ C:\Users\caio\Documents\Visual Studio 2017\Projects\leitor_serial\leitor_serial\
 C:\Users\caio\Documents\Visual Studio 2017\Projects\leitor_serial\leitor_serial\obj\Debug\leitor_serial.csproj.CoreCompileInputs.cache
 C:\Users\caio\Documents\Visual Studio 2017\Projects\leitor_serial\leitor_serial\obj\Debug\leitor_serial.exe
 C:\Users\caio\Documents\Visual Studio 2017\Projects\leitor_serial\leitor_serial\obj\Debug\leitor_serial.pdb
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\bin\Debug\leitor_serial.exe.config
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\bin\Debug\leitor_serial.exe
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\bin\Debug\leitor_serial.pdb
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.csprojResolveAssemblyReference.cache
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.Form1.resources
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.Properties.Resources.resources
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.csproj.GenerateResource.Cache
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.csproj.CoreCompileInputs.cache
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.exe
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\leitor_serial\leitor_serial\obj\Debug\leitor_serial.pdb
