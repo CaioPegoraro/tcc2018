@@ -11,12 +11,14 @@ using System.IO.Ports;
 
 namespace leitor_serial
 {
+
     
     public partial class Form1 : Form
     {
         string RxString;
         double pacote_recebido;
         DateTime tempoInicio, tempoLeitura;
+        bool inicio_leitura = true;
 
         public Form1()
         {
@@ -86,16 +88,26 @@ namespace leitor_serial
             textBoxReceber.AppendText("\n\n == Recebido pacote << \n");
             textBoxReceber.AppendText("cmd: " + pacote_recebido.ToString() + "\n");
 
+
             TimeSpan span = this.tempoLeitura - this.tempoInicio;
             double s = span.TotalSeconds;
 
             this.dataGridView1.Rows.Add(s, pacote_recebido);
+
             tempoLeitura = DateTime.Now;
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
         }
 
         private void porta_serial_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
+            if (inicio_leitura == true)
+            {
+                inicio_leitura = false;
+                //começa contar o tempo a partir da primeira leitura
+                tempoInicio = DateTime.Now;
+                tempoLeitura = tempoInicio;
+            }
+
             //dados recebidos
                 RxString = serialPort1.ReadLine();              //le o dado disponível na serialx
                 pacote_recebido = double.Parse(RxString);
@@ -130,9 +142,6 @@ namespace leitor_serial
                     btnConectar.Text = "Desconectar";
                     comboBox1.Enabled = false;
                     textBoxReceber.AppendText("\n\n == Conectado ao receptor secundário == \n\n");
-
-                    tempoInicio= DateTime.Now;
-                    tempoLeitura = tempoInicio;
                 }
             }
             else

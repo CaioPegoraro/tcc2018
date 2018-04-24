@@ -38,6 +38,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tempo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.angulo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnLimpar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,10 +73,10 @@
             // 
             // textBoxReceber
             // 
-            this.textBoxReceber.Location = new System.Drawing.Point(12, 58);
+            this.textBoxReceber.Location = new System.Drawing.Point(12, 83);
             this.textBoxReceber.Multiline = true;
             this.textBoxReceber.Name = "textBoxReceber";
-            this.textBoxReceber.Size = new System.Drawing.Size(202, 501);
+            this.textBoxReceber.Size = new System.Drawing.Size(202, 476);
             this.textBoxReceber.TabIndex = 2;
             // 
             // dataGridView1
@@ -84,7 +85,7 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.tempo,
             this.angulo});
-            this.dataGridView1.Location = new System.Drawing.Point(238, 15);
+            this.dataGridView1.Location = new System.Drawing.Point(240, 15);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(370, 544);
             this.dataGridView1.TabIndex = 3;
@@ -99,11 +100,21 @@
             this.angulo.HeaderText = "angulo";
             this.angulo.Name = "angulo";
             // 
+            // btnLimpar
+            // 
+            this.btnLimpar.Location = new System.Drawing.Point(12, 44);
+            this.btnLimpar.Name = "btnLimpar";
+            this.btnLimpar.Size = new System.Drawing.Size(202, 23);
+            this.btnLimpar.TabIndex = 4;
+            this.btnLimpar.Text = "Limpar dados";
+            this.btnLimpar.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(622, 571);
+            this.Controls.Add(this.btnLimpar);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.textBoxReceber);
             this.Controls.Add(this.btnConectar);
@@ -128,6 +139,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn tempo;
         private System.Windows.Forms.DataGridViewTextBoxColumn angulo;
+        private System.Windows.Forms.Button btnLimpar;
     }
 }
 
