@@ -105,10 +105,15 @@
             this.timerStatusConexao = new System.Windows.Forms.Timer(this.components);
             this.btnLiberarMotores = new System.Windows.Forms.Button();
             this.lblLiberarMotores = new System.Windows.Forms.Label();
+            this.btnLimpar = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.tempo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.angulo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnCalibrarMotores.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -143,7 +148,7 @@
             this.btnCalibrarMotores.Controls.Add(this.button2);
             this.btnCalibrarMotores.Controls.Add(this.button1);
             this.btnCalibrarMotores.Controls.Add(this.btnPousar);
-            this.btnCalibrarMotores.Location = new System.Drawing.Point(230, 150);
+            this.btnCalibrarMotores.Location = new System.Drawing.Point(229, 150);
             this.btnCalibrarMotores.Name = "btnCalibrarMotores";
             this.btnCalibrarMotores.Size = new System.Drawing.Size(446, 521);
             this.btnCalibrarMotores.TabIndex = 4;
@@ -315,7 +320,7 @@
             // btnConexaoRemota
             // 
             this.btnConexaoRemota.Enabled = false;
-            this.btnConexaoRemota.Location = new System.Drawing.Point(262, 53);
+            this.btnConexaoRemota.Location = new System.Drawing.Point(261, 53);
             this.btnConexaoRemota.Name = "btnConexaoRemota";
             this.btnConexaoRemota.Size = new System.Drawing.Size(87, 45);
             this.btnConexaoRemota.TabIndex = 4;
@@ -330,7 +335,7 @@
             this.sobreToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1125, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1420, 24);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -356,7 +361,7 @@
             // 
             // serialPort1
             // 
-            this.serialPort1.BaudRate = 57600;
+            this.serialPort1.BaudRate = 115200;
             this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // timerCOM
@@ -400,7 +405,7 @@
             this.groupBox2.Controls.Add(this.lblM2);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.lblM1);
-            this.groupBox2.Location = new System.Drawing.Point(696, 150);
+            this.groupBox2.Location = new System.Drawing.Point(695, 150);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(414, 521);
             this.groupBox2.TabIndex = 9;
@@ -781,7 +786,7 @@
             this.lblStatusConexao.AutoSize = true;
             this.lblStatusConexao.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusConexao.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusConexao.Location = new System.Drawing.Point(355, 61);
+            this.lblStatusConexao.Location = new System.Drawing.Point(354, 61);
             this.lblStatusConexao.Name = "lblStatusConexao";
             this.lblStatusConexao.Size = new System.Drawing.Size(49, 24);
             this.lblStatusConexao.TabIndex = 12;
@@ -792,7 +797,7 @@
             this.lblStatusAutomatico.AutoSize = true;
             this.lblStatusAutomatico.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusAutomatico.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusAutomatico.Location = new System.Drawing.Point(525, 61);
+            this.lblStatusAutomatico.Location = new System.Drawing.Point(524, 61);
             this.lblStatusAutomatico.Name = "lblStatusAutomatico";
             this.lblStatusAutomatico.Size = new System.Drawing.Size(49, 24);
             this.lblStatusAutomatico.TabIndex = 11;
@@ -801,7 +806,7 @@
             // btnEstabAuto
             // 
             this.btnEstabAuto.Enabled = false;
-            this.btnEstabAuto.Location = new System.Drawing.Point(432, 53);
+            this.btnEstabAuto.Location = new System.Drawing.Point(431, 53);
             this.btnEstabAuto.Name = "btnEstabAuto";
             this.btnEstabAuto.Size = new System.Drawing.Size(87, 45);
             this.btnEstabAuto.TabIndex = 10;
@@ -812,7 +817,7 @@
             // btnBuzzer
             // 
             this.btnBuzzer.Enabled = false;
-            this.btnBuzzer.Location = new System.Drawing.Point(598, 53);
+            this.btnBuzzer.Location = new System.Drawing.Point(597, 53);
             this.btnBuzzer.Name = "btnBuzzer";
             this.btnBuzzer.Size = new System.Drawing.Size(87, 44);
             this.btnBuzzer.TabIndex = 13;
@@ -825,7 +830,7 @@
             this.lblStatusBuzzer.AutoSize = true;
             this.lblStatusBuzzer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusBuzzer.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusBuzzer.Location = new System.Drawing.Point(691, 61);
+            this.lblStatusBuzzer.Location = new System.Drawing.Point(690, 61);
             this.lblStatusBuzzer.Name = "lblStatusBuzzer";
             this.lblStatusBuzzer.Size = new System.Drawing.Size(49, 24);
             this.lblStatusBuzzer.TabIndex = 14;
@@ -863,7 +868,7 @@
             // btnLiberarMotores
             // 
             this.btnLiberarMotores.Enabled = false;
-            this.btnLiberarMotores.Location = new System.Drawing.Point(757, 53);
+            this.btnLiberarMotores.Location = new System.Drawing.Point(756, 53);
             this.btnLiberarMotores.Name = "btnLiberarMotores";
             this.btnLiberarMotores.Size = new System.Drawing.Size(87, 44);
             this.btnLiberarMotores.TabIndex = 42;
@@ -876,17 +881,49 @@
             this.lblLiberarMotores.AutoSize = true;
             this.lblLiberarMotores.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLiberarMotores.ForeColor = System.Drawing.Color.Red;
-            this.lblLiberarMotores.Location = new System.Drawing.Point(847, 61);
+            this.lblLiberarMotores.Location = new System.Drawing.Point(846, 61);
             this.lblLiberarMotores.Name = "lblLiberarMotores";
             this.lblLiberarMotores.Size = new System.Drawing.Size(49, 24);
             this.lblLiberarMotores.TabIndex = 43;
             this.lblLiberarMotores.Text = "OFF";
             // 
+            // btnLimpar
+            // 
+            this.btnLimpar.Location = new System.Drawing.Point(1119, 643);
+            this.btnLimpar.Name = "btnLimpar";
+            this.btnLimpar.Size = new System.Drawing.Size(289, 29);
+            this.btnLimpar.TabIndex = 47;
+            this.btnLimpar.Text = "Limpar dados";
+            this.btnLimpar.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.tempo,
+            this.angulo});
+            this.dataGridView1.Location = new System.Drawing.Point(1119, 41);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(289, 595);
+            this.dataGridView1.TabIndex = 46;
+            // 
+            // tempo
+            // 
+            this.tempo.HeaderText = "tempo";
+            this.tempo.Name = "tempo";
+            // 
+            // angulo
+            // 
+            this.angulo.HeaderText = "angulo";
+            this.angulo.Name = "angulo";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1125, 683);
+            this.ClientSize = new System.Drawing.Size(1420, 683);
+            this.Controls.Add(this.btnLimpar);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnLiberarMotores);
             this.Controls.Add(this.lblLiberarMotores);
             this.Controls.Add(this.button25);
@@ -913,6 +950,7 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -995,6 +1033,10 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btnLimpar;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn tempo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn angulo;
     }
 }
 

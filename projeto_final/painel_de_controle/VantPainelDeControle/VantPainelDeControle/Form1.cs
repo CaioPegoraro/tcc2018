@@ -16,10 +16,19 @@ namespace VantPainelDeControle
     {
 
         string RxString;
-        int pacote_recebido;
+
         int status_buzzer = 0;
         int status_motores = 0;
         int status_controle = 0;
+
+        float tipo_dado_entrada = 0;
+        float[] tupla_dados = new float[2];
+
+        List<String> listaItens = new List<String>(100);
+        int count = 0;
+        int numero_amostras = 40;
+
+        int flag_posicao = 0;
 
         public Form1()
         {
@@ -27,6 +36,9 @@ namespace VantPainelDeControle
             timerCOM.Enabled = true;
             //timerStatusBateria.Enabled = true;
             //timerStatusConexao.Enabled = true;
+
+            lblStatusConexao.Text = "ON";
+            lblStatusConexao.ForeColor = System.Drawing.Color.Green;
         }
 
         private void atualizaListaCOMs()
@@ -82,10 +94,17 @@ namespace VantPainelDeControle
 
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
+            RxString = serialPort1.ReadLine(); //le o dado disponível na serialx
 
-            RxString = serialPort1.ReadLine();              //le o dado disponível na serialx
-            pacote_recebido = Int32.Parse(RxString);
-            this.Invoke(new EventHandler(trataDadoRecebido));   //chama outra thread para escrever o dado no text box
+            Console.WriteLine(RxString);
+            
+            this.count++;
+            this.listaItens.Add(RxString);
+            
+            if (this.count == numero_amostras)
+                this.Invoke(new EventHandler(trataDadoRecebido));
+
+            
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -183,54 +202,53 @@ namespace VantPainelDeControle
             //Um dado recebido é composto por um cmd (comando) e um valor associado.
             //dessa forma é possível examinar qual ação tomar sem ter salvo o comando enviado anteriormente
 
-            //textBoxReceber.AppendText(RxString + "\n");
+            //angulo dividir por 100 = graus
+            //tempo dividir por 10000 = ms
+            for (int i = 0; i < this.listaItens.Count; i++)
+            {
+                string[] tokens = this.listaItens.ElementAt(i).Split('#');
+                this.dataGridView1.Rows.Add(tokens[0], tokens[1]);
+                dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
+            }
+            
 
-           
-            int cmd = pacote_recebido / 100000;
-            int valor = pacote_recebido - cmd*100000;
-
-            //Console.WriteLine("pct_recebido: " + pacote_recebido);
-            //Console.WriteLine(cmd);
-            //Console.WriteLine(valor);
-
-            textBoxReceber.AppendText("\n\n == Recebido resposta << \n");
-            textBoxReceber.AppendText("cmd: " + cmd.ToString() + "\n");
-            textBoxReceber.AppendText("valor: " + valor.ToString() + "\n\n\n");
+            // textBoxReceber.AppendText("valor: " + valor.ToString() + "\n\n\n");
 
             //tratar a descrição e ação do comando recebido:
+            /*
+                        switch (cmd){
 
-            switch (cmd){
+                            case 125:
+                                //conexao requisitada
+                                //porem, pode ter sucesso (Valor=1) ou falhado (valor=0);
 
-                case 125:
-                    //conexao requisitada
-                    //porem, pode ter sucesso (Valor=1) ou falhado (valor=0);
+                                if (valor == 1)
+                                {
+                                    //conexao bem sucedida
+                                    lblStatusConexao.Text = "ON";
+                                    lblStatusConexao.ForeColor = System.Drawing.Color.Green;
+                                }
+                                else if(valor == 0)
+                                {
+                                    lblStatusConexao.Text = "OFF";
+                                    lblStatusConexao.ForeColor = System.Drawing.Color.Red;
+                                }
+                                break;
 
-                    if (valor == 1)
-                    {
-                        //conexao bem sucedida
-                        lblStatusConexao.Text = "ON";
-                        lblStatusConexao.ForeColor = System.Drawing.Color.Green;
-                    }
-                    else if(valor == 0)
-                    {
-                        lblStatusConexao.Text = "OFF";
-                        lblStatusConexao.ForeColor = System.Drawing.Color.Red;
-                    }
-                    break;
-
-                case 126:
-                    //Leitura valor da bateria
-                    //leitura cedula unica: 4.13v = 100%
-                    //                      2.13v = 0% (nivel altamente critico)
+                            case 126:
+                                //Leitura valor da bateria
+                                //leitura cedula unica: 4.13v = 100%
+                                //                      2.13v = 0% (nivel altamente critico)
 
 
 
-                    double porcent_bat = ((double)(valor-270) / (double)(413-270))*100;
-                    int bat_int = (int)porcent_bat;
-                    //Console.WriteLine(porcent_bat);
+                                double porcent_bat = ((double)(valor-270) / (double)(413-270))*100;
+                                int bat_int = (int)porcent_bat;
+                                //Console.WriteLine(porcent_bat);
 
-                    break;
-            }
+                                break;
+                        }
+                        */
 
         }
 

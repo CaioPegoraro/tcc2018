@@ -21,6 +21,9 @@
 //Endereco da interface serial
 #define RECEPTOR_SECUNDARIO_ADDR 0x60
 
+int contador_cliente=0;
+String escrita_serial;
+
 //Pacote de dados para armazenamento da informacao
 //recebida pela porta serial
 pacote dados;
@@ -45,13 +48,13 @@ Led LED_MPU(8);
 //LCD
 LiquidCrystal_I2C lcd(0x27,16,2);
 unsigned long pMillis = 0;
-const long intervalo = 500; //ms
+const long intervalo = 300; //ms
 boolean escrever_idle=true;
 
 /////////// VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////////
 
 //[1] -> PID: Controle de estabilizacao automatico//
-float tempoGasto, time, tempoAnterior;
+float tempoGasto, time, tempoAnterior, tempo_decorrido_PID;
 bool inicio_processo=true;
 
 float angulo_y;
@@ -62,14 +65,14 @@ float pid_d=0;
 
 //EMPIRICO
 double kp=0.75; //0.75
-double ki=0.003; //0.003
-double kd=0.35; //0.35
+double ki=0.001; //0.001
+double kd=0.25; //0.25
 
 //ZIEGLER-NICHOLS
 /*
 double kp=0.45;
 double ki=0.45;
-double kd=0.25;
+double kd=0.1125;
 */
 
 double AceleracaoPID=1300; 
@@ -79,7 +82,7 @@ float desired_angle = 0;
 //[2] -> FUZZY: Controle de estabilização nebuloso //
 Fuzzy* fuzzy = new Fuzzy();
 int flag_direcao; //indica a orientacao de giro do VANT
-float AceleracaoFuzzy = 1320;
+float AceleracaoFuzzy = 1305;
 /// FIM VARIAVEIS FUZZY ///
 
 /////////// FIM DAS VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////
@@ -144,7 +147,7 @@ void calibrar_motores(){
 void setup() {
 
   TesteLeds();
-  Serial.begin(57600);
+  Serial.begin(115200);
 
   ///// SETUP VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////
 
@@ -153,6 +156,7 @@ void setup() {
   
   ///[1] -> PID///
   time = millis();
+  tempo_decorrido_PID=0;
 
   ///[2] -> FUZZY///
 
@@ -219,38 +223,39 @@ void setup() {
   FuzzyOutput* VelocidadeFuzzySaida = new FuzzyOutput(1);
   
   //Conjunto FuzzySet de saida
-  FuzzySet* velocidadePositivo1 = new FuzzySet(0,0,0,10);
+  FuzzySet* velocidadePositivo1 = new FuzzySet(0,0,0,3);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo1);
   
-  FuzzySet* velocidadePositivo2 = new FuzzySet(5,10,10,15);
+  FuzzySet* velocidadePositivo2 = new FuzzySet(3,5,5,7);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo2);
   
-  FuzzySet* velocidadePositivo3 = new FuzzySet(10,15,15,20);
+  FuzzySet* velocidadePositivo3 = new FuzzySet(5,7,7,9);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo3);
 
-  FuzzySet* velocidadePositivo4 = new FuzzySet(15,20,20,25);
+  FuzzySet* velocidadePositivo4 = new FuzzySet(7,9,9,11);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo4);
 
-  FuzzySet* velocidadePositivo5 = new FuzzySet(20,25,25,30);
+  FuzzySet* velocidadePositivo5 = new FuzzySet(9,11,11,13);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo5);
 
-  FuzzySet* velocidadePositivo6 = new FuzzySet(25,30,30,35);
+  FuzzySet* velocidadePositivo6 = new FuzzySet(11,13,13,15);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo6);
 
-  FuzzySet* velocidadePositivo7 = new FuzzySet(30,35,35,40);
+  FuzzySet* velocidadePositivo7 = new FuzzySet(13,15,15,17);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo7);
   
-  FuzzySet* velocidadePositivo8 = new FuzzySet(35,40,40,45);
+  FuzzySet* velocidadePositivo8 = new FuzzySet(15,17,17,19);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo8);
   
-  FuzzySet* velocidadePositivo9 = new FuzzySet(40,45,45,50);
+  FuzzySet* velocidadePositivo9 = new FuzzySet(17,19,19,21);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo9);
   
-  FuzzySet* velocidadePositivo10 = new FuzzySet(45,50,50,55);
+  FuzzySet* velocidadePositivo10 = new FuzzySet(19,21,21,23);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo10);
 
-  FuzzySet* velocidadePositivo11 = new FuzzySet(50,55,55,60);
+  FuzzySet* velocidadePositivo11 = new FuzzySet(21,23,23,25);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo11);
+  
   fuzzy->addFuzzyOutput(VelocidadeFuzzySaida);
 
   //REGRAS FUZZY
@@ -428,14 +433,13 @@ void setup() {
   calibrar_motores();
 
   time = millis();
-  
 }
 
 //Faz a leitura de um potenciometro na porta analógica A0 e define ao valor do angulo que seria lido no MPU
-double simular_angulo(){
+float simular_angulo(){
   float angulo = analogRead(0);
-  angulo = map(angulo,0,1023,-33,33);
-  delay(10);
+  angulo = map(angulo,0,1023,-30,30);
+  //delay(10);
   return angulo;
 }
 
@@ -476,10 +480,66 @@ void loop() {
   //Ao liberar os motores a operacao padrao sera o controle de estabilidade realizado pelo PID utilizando os valores do acelerometro.
   //intercalado a essa operacao seram executados operacoes de controle manual (controlado pelo painel de controle).
 
+   if (Serial.available() > 0) {
+    byte buff[2];
+    Serial.readBytes(buff, 2);
+
+    //e armazena na variavel dados
+    dados.cmd = (int)buff[0];
+    dados.valor = (int)buff[1];
+
+    int valor_data = dados.cmd*100 + dados.valor;
+    
+    if(valor_data==1000){
+    //tratamento de comandos de ordem >=10 sem dados anexados
+      dados.cmd = 10;
+      //Serial.println(">> Sistema de estabilizacao ONLINE");
+    }
+    else if(valor_data==2000){
+      dados.cmd = 20;
+      //Serial.println(">> Sistema de estabilizacao OFFLINE");
+    }
+
+    //Outros casos de controle
+    if (dados.cmd < 7) { //conjunto de comandos que vai
+      //acionar um ou mais motores
+      flag_operacao = 1;
+    }
+    else if (dados.cmd == 7) {
+      flag_calibrar = 1;
+    }
+    else if (dados.cmd == 8) {
+      //liberar flag para operar os motores
+      flag_ok = 1;
+      LED_MOTOR.setOn();
+    }
+    else if (dados.cmd == 9) {
+      //travar flag para operar os motores
+      flag_ok = 0;
+      LED_MOTOR.setOff();
+    }
+    else if(dados.cmd ==10){
+      //habilita rotina de controle automatico
+      flag_controle=1;
+    }
+    else if(dados.cmd ==20){
+      //desabilita rotina de controle automatico
+      flag_controle=0;
+      flag_calibrar = 1;
+      inicio_processo=true;
+     }
+    //Serial.println(dados.cmd);
+    //Serial.println(dados.valor);
+      
+   }
+
+
   //Operacao de estabilizacao do VANT
 
-  //SISTEMA DE CONTROLE UTLIZANDO FUZZY
-  if(flag_controle==1){
+  //===========================================================
+  //=========== SISTEMA DE CONTROLE UTILIZANDO FUZZY  =========
+  //===========================================================
+  if(flag_controle==2){
     //Leitura do angulo de entrada
     //angulo_y = simular_angulo();
     angulo_y = calcular_angulo();
@@ -520,15 +580,35 @@ void loop() {
       Serial.print(" | Output: ");
       Serial.print(FuzzyOutput);
   
-      if(flag_direcao==1){
-        intensidade_esquerda = AceleracaoFuzzy - FuzzyOutput;
-        intensidade_direita = AceleracaoFuzzy + FuzzyOutput;
+      if(flag_direcao==1){ //y>0
+
+        float correcao;
+
+        if(angulo_y>20)
+          correcao=5;
+        else if(angulo_y>10)
+          correcao=0;
+        else
+          correcao=0;
+
+        intensidade_esquerda = AceleracaoFuzzy+3;
+        intensidade_direita = AceleracaoFuzzy + FuzzyOutput + correcao;
       }
       else{
-        //flag_direcao=2;
-        intensidade_esquerda = AceleracaoFuzzy + FuzzyOutput;
-        intensidade_direita = AceleracaoFuzzy - FuzzyOutput;
-      }
+        //flag_direcao=2; -> //y<0
+
+        float correcao;
+
+        if(angulo_y>20)
+          correcao=10;
+        else if(angulo_y>10)
+          correcao=7;
+        else
+          correcao=6;
+        
+        intensidade_esquerda = AceleracaoFuzzy + FuzzyOutput + correcao +2;
+        intensidade_direita = AceleracaoFuzzy;
+      }    
     
       //Validacao dos dados gerados antes de executar
       if(intensidade_esquerda<1300)
@@ -547,22 +627,32 @@ void loop() {
       Serial.print(" | DIR: ");
       Serial.println(intensidade_direita);
   
-      /*
+      
       motor(1,intensidade_esquerda);
       motor(3,intensidade_esquerda);
       motor(2,intensidade_direita);
       motor(4,intensidade_direita);
+     
+     /* 
+      motor(3,intensidade_esquerda);
+      motor(4,intensidade_direita);
      */
-      
-     motor(3,intensidade_esquerda);
-     motor(4,intensidade_direita);
-  
+     
       delay(100);
     }
   }
 
-  //SISTEMA DE CONTROLE UTILIZANDO PID
-  if(flag_controle==2){
+  //===========================================================
+  //=========== SISTEMA DE CONTROLE UTILIZANDO PID  ===========
+  //===========================================================
+  //flag_controle=1;
+  
+  /*
+  if(contador_cliente==40)
+    flag_controle=10;
+  */
+    
+  if(flag_controle==1){
     LED_CONTROLE.setOn();
 
     //ALGORITMO DE CONTROLE 1: PID
@@ -570,15 +660,32 @@ void loop() {
     time = millis();  //leitura do instante de tempo atual
     tempoGasto = (time - tempoAnterior) / 1000; 
 
-    if(inicio_processo==true){
-      inicio_processo=false;
-      tempoGasto=0;
+     if(inicio_processo==true){
+       inicio_processo=false;
+       tempo_decorrido_PID=time;
+       tempoGasto=1;
     }
-
+    
+    //angulo_y = simular_angulo();
     angulo_y = calcular_angulo();
-
+/* 
+    Serial.println(angulo_y);
+    Serial.println(time-tempo_decorrido_PID);
+*/
+    escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_y);
+    //Serial.println(escrita_serial);
+    
+    contador_cliente++;
+/*
+    Serial.print("(");
+    Serial.print(angulo_y);
+    Serial.print(";");
+    Serial.print(time-tempo_decorrido_PID);
+    Serial.println(")");
+*/
+  
     if((angulo_y > 50) || (angulo_y <-50)){
-      //erro na leitura
+      //erro na leitura do giroscopio/acelerometro
       flag_controle=0;
       lcd.setCursor(0,0);
       lcd.print("ERRO DE LEITURA MPU");
@@ -587,14 +694,6 @@ void loop() {
     }
     else{
       erro = angulo_y - desired_angle;
-     
-      //exibe o angulo atual no lcd 
-      if (time - pMillis >= intervalo) {
-        //Serial.println(angulo_y);
-        escreve_angulo_lcd(angulo_y);
-        pMillis = time;
-        Serial.println(angulo_y);
-      }
 
       //PROPORCIONAL
       pid_p = kp*erro;
@@ -606,6 +705,7 @@ void loop() {
 
       //DERIVATIVO
       pid_d = kd*((erro - erro_anterior)/tempoGasto);
+      
 
       //SOMA DOS FATORES DO PID
       PID = pid_p + pid_i + pid_d;
@@ -621,7 +721,8 @@ void loop() {
   
       intensidade_esquerda = AceleracaoPID - PID;
       intensidade_direita = AceleracaoPID + PID;
-  
+
+      //Direita
       if(intensidade_direita < 1000)
       {
         intensidade_direita= 1000;
@@ -630,7 +731,8 @@ void loop() {
       {
         intensidade_direita=1400;
       }
-      //Left
+      
+      //Esquerda
       if(intensidade_esquerda < 1000)
       {
         intensidade_esquerda= 1000;
@@ -639,12 +741,14 @@ void loop() {
       {
         intensidade_esquerda=1400;
       }
-  
-   /* Serial.print(">> intensidade_esquerda: ");
+ /* 
+      Serial.print(">> intensidade_esquerda: ");
       Serial.print(intensidade_esquerda);
       Serial.print(" | intensidade_direita: ");
       Serial.println(intensidade_direita);
-  */
+
+ */
+ 
   /*
       motor1.writeMicroseconds(intensidade_esquerda-40);
       motor3.writeMicroseconds(intensidade_esquerda);
@@ -667,6 +771,7 @@ void loop() {
   
   //flag de calibrar: indica a prioridade da operacao de calibacao (mantendo os motores na velocidade minima/desligados)
   //flag de ok: se for 0 indica que nao houve comandos que utilizam os motores do drone
+  
   if (flag_calibrar == 1 || flag_ok == 0) {
     //calibrar motores
     //lcd.setCursor(0,0);
@@ -680,6 +785,7 @@ void loop() {
     LED_CONTROLE.setOff();
     flag_calibrar=0;
   }
+  
   /*
   else if(flag_ok==1)
     escreve_angulo_lcd(angulo_y);
