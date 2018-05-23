@@ -26,7 +26,7 @@ namespace VantPainelDeControle
 
         List<String> listaItens = new List<String>(100);
         int count = 0;
-        int numero_amostras = 40;
+        int numero_amostras = 500;
 
         int flag_posicao = 0;
 
@@ -104,7 +104,6 @@ namespace VantPainelDeControle
             if (this.count == numero_amostras)
                 this.Invoke(new EventHandler(trataDadoRecebido));
 
-            
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -202,12 +201,19 @@ namespace VantPainelDeControle
             //Um dado recebido é composto por um cmd (comando) e um valor associado.
             //dessa forma é possível examinar qual ação tomar sem ter salvo o comando enviado anteriormente
 
+            this.dataGridView1.ClearSelection();
+
             //angulo dividir por 100 = graus
             //tempo dividir por 10000 = ms
             for (int i = 0; i < this.listaItens.Count; i++)
             {
-                string[] tokens = this.listaItens.ElementAt(i).Split('#');
+                //altera o ponto para virgula para depois usar diretamente no excel
+                string[] tokens = (this.listaItens.ElementAt(i).Replace(".",",")).Split('#');
                 this.dataGridView1.Rows.Add(tokens[0], tokens[1]);
+
+                this.dataGridView1.Rows[i].Cells[0].Selected = true;
+                this.dataGridView1.Rows[i].Cells[1].Selected = true;
+
                 dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
             }
             
@@ -937,6 +943,37 @@ namespace VantPainelDeControle
                 this.lblStatusAutomatico.ForeColor = System.Drawing.Color.Red;
             }
             
+        }
+
+        private void btnLimpar_Click(object sender, EventArgs e)
+        {
+            this.dataGridView1.Rows.Clear();
+            this.dataGridView1.Refresh();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            /*
+            this.dataGridView1.ClearSelection();
+
+            this.dataGridView1.Rows.Add(50,50);
+            this.dataGridView1.Rows[0].Cells[0].Selected = true;
+            this.dataGridView1.Rows[0].Cells[1].Selected = true;
+
+            this.dataGridView1.Rows.Add(50, 50);
+            this.dataGridView1.Rows[1].Cells[0].Selected = true;
+            this.dataGridView1.Rows[1].Cells[1].Selected = true;
+
+            this.dataGridView1.Rows.Add(50, 50);
+            this.dataGridView1.Rows[2].Cells[0].Selected = true;
+            this.dataGridView1.Rows[2].Cells[1].Selected = true;
+            */
+
+        }
+
+        private void button9_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

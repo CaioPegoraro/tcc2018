@@ -64,9 +64,9 @@ float pid_i=0;
 float pid_d=0;
 
 //EMPIRICO
-double kp=0.75; //0.75
-double ki=0.001; //0.001
-double kd=0.25; //0.25
+double kp=0.8; //0.95
+double ki=0.001; //0.003
+double kd=0.4; //0.4
 
 //ZIEGLER-NICHOLS
 /*
@@ -465,7 +465,7 @@ void motor(int m, float velo){
         motor3.writeMicroseconds(velo+7);
         break;
       case 4:
-        motor4.writeMicroseconds(velo+4);
+        motor4.writeMicroseconds(velo+7);
         break;
     }
   }
@@ -532,7 +532,6 @@ void loop() {
     //Serial.println(dados.valor);
       
    }
-
 
   //Operacao de estabilizacao do VANT
 
@@ -647,11 +646,16 @@ void loop() {
   //===========================================================
   //flag_controle=1;
   
+  angulo_y = calcular_angulo();
+
   /*
-  if(contador_cliente==40)
-    flag_controle=10;
+  if(contador_cliente==50){
+    flag_controle=0;
+    flag_calibrar = 1;
+    inicio_processo=true;
+  }
   */
-    
+  
   if(flag_controle==1){
     LED_CONTROLE.setOn();
 
@@ -664,7 +668,7 @@ void loop() {
        inicio_processo=false;
        tempo_decorrido_PID=time;
        tempoGasto=1;
-    }
+     }
     
     //angulo_y = simular_angulo();
     angulo_y = calcular_angulo();
@@ -673,7 +677,7 @@ void loop() {
     Serial.println(time-tempo_decorrido_PID);
 */
     escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_y);
-    //Serial.println(escrita_serial);
+    Serial.println(escrita_serial);
     
     contador_cliente++;
 /*
@@ -699,7 +703,7 @@ void loop() {
       pid_p = kp*erro;
 
       //INTEGRATIVO
-      if(-3 < erro <3){
+      if(-2 < erro < 2){
         pid_i = pid_i+(ki*erro);  
       }
 

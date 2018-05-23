@@ -109,6 +109,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tempo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.angulo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button9 = new System.Windows.Forms.Button();
             this.btnCalibrarMotores.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -895,6 +896,7 @@
             this.btnLimpar.TabIndex = 47;
             this.btnLimpar.Text = "Limpar dados";
             this.btnLimpar.UseVisualStyleBackColor = true;
+            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
             // 
             // dataGridView1
             // 
@@ -904,7 +906,7 @@
             this.angulo});
             this.dataGridView1.Location = new System.Drawing.Point(1119, 41);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(289, 595);
+            this.dataGridView1.Size = new System.Drawing.Size(289, 560);
             this.dataGridView1.TabIndex = 46;
             // 
             // tempo
@@ -917,11 +919,22 @@
             this.angulo.HeaderText = "angulo";
             this.angulo.Name = "angulo";
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(1119, 607);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(289, 29);
+            this.button9.TabIndex = 48;
+            this.button9.Text = "Selecionar dados";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1420, 683);
+            this.Controls.Add(this.button9);
             this.Controls.Add(this.btnLimpar);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnLiberarMotores);
@@ -942,6 +955,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Painel de controle - VANT -";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.btnCalibrarMotores.ResumeLayout(false);
             this.btnCalibrarMotores.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -1037,6 +1051,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn tempo;
         private System.Windows.Forms.DataGridViewTextBoxColumn angulo;
+        private System.Windows.Forms.Button button9;
     }
 }
 
