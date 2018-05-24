@@ -19,7 +19,6 @@ C:\Users\Caio\Desktop\Vant Caio\Arquitetura comunicação\Vant Painel de Control
 C:\Users\Caio\Caio\UFSCar\Anteriores\Iniciação Científica\Vant Caio\Arquitetura comunicação\Vant Painel de Controle\VantPainelDeControle\VantPainelDeControle\bin\Debug\VantPainelDeControle.exe.config
 C:\Users\Caio\Caio\UFSCar\Anteriores\Iniciação Científica\Vant Caio\Arquitetura comunicação\Vant Painel de Controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.exe
 C:\Users\Caio\Caio\UFSCar\Anteriores\Iniciação Científica\Vant Caio\Arquitetura comunicação\Vant Painel de Controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.pdb
-C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.csprojResolveAssemblyReference.cache
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.Form1.resources
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.Properties.Resources.resources
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.csproj.GenerateResource.Cache
@@ -29,3 +28,4 @@ C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\bin\Debug\VantPainelDeControle.exe.config
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\bin\Debug\VantPainelDeControle.exe
 C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\bin\Debug\VantPainelDeControle.pdb
+C:\Users\caio\Caio\UFSCar\TCC\repositorio\trunk\projeto_final\painel_de_controle\VantPainelDeControle\VantPainelDeControle\obj\Debug\VantPainelDeControle.csprojAssemblyReference.cache

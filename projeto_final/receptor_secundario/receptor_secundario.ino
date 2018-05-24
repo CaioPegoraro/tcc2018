@@ -64,9 +64,9 @@ float pid_i=0;
 float pid_d=0;
 
 //EMPIRICO
-double kp=0.8; //0.95
-double ki=0.001; //0.003
-double kd=0.4; //0.4
+double kp=0.38; //0.75
+double ki=0; //0.003
+double kd=0; //0.4
 
 //ZIEGLER-NICHOLS
 /*

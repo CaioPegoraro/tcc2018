@@ -26,7 +26,7 @@ namespace VantPainelDeControle
 
         List<String> listaItens = new List<String>(100);
         int count = 0;
-        int numero_amostras = 500;
+        int numero_amostras = 1000;
 
         int flag_posicao = 0;
 
@@ -908,6 +908,8 @@ namespace VantPainelDeControle
             //valor = 0000
             //                        cmd  valor
 
+            this.numero_amostras = Convert.ToInt32(this.txtQntDados.Text);
+
             if (status_controle == 0)
             {
                 byte[] data = new byte[] { 10, 0 };
@@ -949,6 +951,14 @@ namespace VantPainelDeControle
         {
             this.dataGridView1.Rows.Clear();
             this.dataGridView1.Refresh();
+
+            count = 0;
+            this.listaItens.Clear();
+
+            status_motores = 0;
+            lblLiberarMotores.Text = "OFF";
+            lblLiberarMotores.ForeColor = System.Drawing.Color.Red;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
