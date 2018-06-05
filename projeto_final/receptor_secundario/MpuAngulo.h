@@ -1,5 +1,7 @@
 //Este codigo foi produzido por "Krodal"
 
+Angulo angulo_tmp;
+
 // MPU-6050 Accelerometer + Gyro
 // -----------------------------
 //
@@ -815,7 +817,7 @@ void calibrate_sensors() {
   //Serial.println("Finishing Calibration");
 }
 
-float calcular_angulo(){
+Angulo calcular_angulo(){
   int error;
   double dT;
   accel_t_gyro_union accel_t_gyro;
@@ -948,7 +950,9 @@ float calcular_angulo(){
   // Delay so we don't swamp the serial port
   delay(5);
 
-  return angle_y;
+  angulo_tmp.x = angle_x;
+  angulo_tmp.y = angle_y;
+  return angulo_tmp;;
 }
 
 

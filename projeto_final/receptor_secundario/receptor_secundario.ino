@@ -52,37 +52,57 @@ const long intervalo = 300; //ms
 boolean escrever_idle=true;
 
 /////////// VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////////////
+Angulo angulo;
+double angulo_y,angulo_x;
+
+double intensidade_esquerda, intensidade_direita, intensidade_atras, intensidade_frente;
 
 //[1] -> PID: Controle de estabilizacao automatico//
 float tempoGasto, time, tempoAnterior, tempo_decorrido_PID;
 bool inicio_processo=true;
+bool erro_mpu = false;
 
-float angulo_y;
-float PID, intensidade_esquerda, intensidade_direita, erro, erro_anterior;
-float pid_p=0;
-float pid_i=0;
-float pid_d=0;
+// eixo ---- y
+double PID_Emp_y, erro_pid_y, erro_pid_y_anterior;
+double pid_p_y=0;
+double pid_i_y=0;
+double pid_d_y=0;
 
-//EMPIRICO
-double kp=0.38; //0.75
-double ki=0; //0.003
-double kd=0; //0.4
+double kp_y=0.8;
+double ki_y=0.001;
+double kd_y=0.4;
 
-//ZIEGLER-NICHOLS
-/*
-double kp=0.45;
-double ki=0.45;
-double kd=0.1125;
-*/
+// eixo ---- x
+double PID_Emp_x, erro_pid_x, erro_pid_x_anterior;
+double pid_p_x=0;
+double pid_i_x=0;
+double pid_d_x=0;
+
+double kp_x=1;
+double ki_x=0.001;
+double kd_x=0.35;
 
 double AceleracaoPID=1300; 
 float desired_angle = 0;
-/// FIM VARIAVEIS PID //
 
-//[2] -> FUZZY: Controle de estabilização nebuloso //
+/// FIM VARIAVEIS PID EMPÍRICO//
+
+//[2] -> PID: Ziegler-Nichols//
+#include <PID_v1.h>
+double Setpoint1, Output1;
+
+double kpZN_y=0.42, kiZN_y=0.583, kdZN_y=0.22;
+PID myPID(&angulo_y, &Output1, &Setpoint1, kpZN_y, kiZN_y, kdZN_y, DIRECT);
+
+/// FIM VARIAVEIS PID Z-N//
+
+//[3] -> FUZZY: Controle de estabilização nebuloso //
+
 Fuzzy* fuzzy = new Fuzzy();
 int flag_direcao; //indica a orientacao de giro do VANT
 float AceleracaoFuzzy = 1305;
+float tempo_decorrido_FUZZY;
+
 /// FIM VARIAVEIS FUZZY ///
 
 /////////// FIM DAS VARIAVEIS DOS SISTEMAS DE CONTROLE ///////////
@@ -145,7 +165,6 @@ void calibrar_motores(){
 }
 
 void setup() {
-
   TesteLeds();
   Serial.begin(115200);
 
@@ -154,21 +173,26 @@ void setup() {
   intensidade_esquerda=0;
   intensidade_direita=0;
   
-  ///[1] -> PID///
+  ///[1] -> PID EMPÍRICO ///
   time = millis();
   tempo_decorrido_PID=0;
 
-  ///[2] -> FUZZY///
-
+  ///[2] -> PID Z-N ///
+  Setpoint1 = 0;
+  myPID.SetMode(AUTOMATIC);
+  myPID.SetOutputLimits (-30,30);
+  
+  ///[3] -> FUZZY ///
+  tempo_decorrido_FUZZY=0;
+  
   //ENTRADA FUZZY
   FuzzyInput* AnguloFuzzyEntrada = new FuzzyInput(1);// Entrada fuzzy e como parametro seu ID
 
   //Conjunto de FuuzySet de entrada
-/*
-  FuzzySet* anguloPositivo1 = new FuzzySet(0,0,0,3);
+  FuzzySet* anguloPositivo1 = new FuzzySet(0,0,0,5);
   AnguloFuzzyEntrada->addFuzzySet(anguloPositivo1);
   
-  FuzzySet* anguloPositivo2 = new FuzzySet(0,3,3,10);
+  FuzzySet* anguloPositivo2 = new FuzzySet(0,5,5,10);
   AnguloFuzzyEntrada->addFuzzySet(anguloPositivo2);
   
   FuzzySet* anguloPositivo3 = new FuzzySet(5,10,10,15);
@@ -177,45 +201,8 @@ void setup() {
   FuzzySet* anguloPositivo4 = new FuzzySet(10,15,15,20);
   AnguloFuzzyEntrada->addFuzzySet(anguloPositivo4);
 
-  FuzzySet* anguloPositivo5 = new FuzzySet(15,20,20,25);
+  FuzzySet* anguloPositivo5 = new FuzzySet(20,30,30,30);
   AnguloFuzzyEntrada->addFuzzySet(anguloPositivo5);
-
-  FuzzySet* anguloPositivo6 = new FuzzySet(20,25,25,35);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo6);
-*/
-
-  FuzzySet* anguloPositivo1 = new FuzzySet(0,0,0,3);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo1);
-  
-  FuzzySet* anguloPositivo2 = new FuzzySet(0,3,3,6);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo2);
-  
-  FuzzySet* anguloPositivo3 = new FuzzySet(3,6,6,9);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo3);
-
-  FuzzySet* anguloPositivo4 = new FuzzySet(6,9,9,12);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo4);
-
-  FuzzySet* anguloPositivo5 = new FuzzySet(9,12,12,15);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo5);
-
-  FuzzySet* anguloPositivo6 = new FuzzySet(12,15,15,18);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo6);
-
-  FuzzySet* anguloPositivo7 = new FuzzySet(15,18,18,21);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo7);
-  
-  FuzzySet* anguloPositivo8 = new FuzzySet(18,21,21,24);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo8);
-
-  FuzzySet* anguloPositivo9 = new FuzzySet(21,24,24,27);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo9);
-
-  FuzzySet* anguloPositivo10 = new FuzzySet(24,27,27,30);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo10);
-
-  FuzzySet* anguloPositivo11 = new FuzzySet(27,30,30,30);
-  AnguloFuzzyEntrada->addFuzzySet(anguloPositivo11);
 
   fuzzy->addFuzzyInput(AnguloFuzzyEntrada);
 
@@ -223,38 +210,20 @@ void setup() {
   FuzzyOutput* VelocidadeFuzzySaida = new FuzzyOutput(1);
   
   //Conjunto FuzzySet de saida
-  FuzzySet* velocidadePositivo1 = new FuzzySet(0,0,0,3);
+  FuzzySet* velocidadePositivo1 = new FuzzySet(0,1,1,2);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo1);
   
-  FuzzySet* velocidadePositivo2 = new FuzzySet(3,5,5,7);
+  FuzzySet* velocidadePositivo2 = new FuzzySet(1,2,2,3);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo2);
   
-  FuzzySet* velocidadePositivo3 = new FuzzySet(5,7,7,9);
+  FuzzySet* velocidadePositivo3 = new FuzzySet(2,3,3,4);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo3);
 
-  FuzzySet* velocidadePositivo4 = new FuzzySet(7,9,9,11);
+  FuzzySet* velocidadePositivo4 = new FuzzySet(3,4,4,5);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo4);
 
-  FuzzySet* velocidadePositivo5 = new FuzzySet(9,11,11,13);
+  FuzzySet* velocidadePositivo5 = new FuzzySet(4,5,5,6);
   VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo5);
-
-  FuzzySet* velocidadePositivo6 = new FuzzySet(11,13,13,15);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo6);
-
-  FuzzySet* velocidadePositivo7 = new FuzzySet(13,15,15,17);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo7);
-  
-  FuzzySet* velocidadePositivo8 = new FuzzySet(15,17,17,19);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo8);
-  
-  FuzzySet* velocidadePositivo9 = new FuzzySet(17,19,19,21);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo9);
-  
-  FuzzySet* velocidadePositivo10 = new FuzzySet(19,21,21,23);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo10);
-
-  FuzzySet* velocidadePositivo11 = new FuzzySet(21,23,23,25);
-  VelocidadeFuzzySaida->addFuzzySet(velocidadePositivo11);
   
   fuzzy->addFuzzyOutput(VelocidadeFuzzySaida);
 
@@ -303,60 +272,6 @@ void setup() {
   FuzzyRule* fuzzyRule05 = new FuzzyRule(5,seAnguloPositivo5,entaoVeloPositivo5);
 
   fuzzy->addFuzzyRule(fuzzyRule05);
-
-  //REGRA 6: FuzzyRule "SE angulo = anguloPositivo6 ENTAO velocidade = velocidadePositivo6"
-  FuzzyRuleAntecedent* seAnguloPositivo6 = new FuzzyRuleAntecedent();
-  seAnguloPositivo6->joinSingle(anguloPositivo6);
-  FuzzyRuleConsequent* entaoVeloPositivo6 = new FuzzyRuleConsequent();
-  entaoVeloPositivo6->addOutput(velocidadePositivo6);
-  FuzzyRule* fuzzyRule6 = new FuzzyRule(6,seAnguloPositivo6,entaoVeloPositivo6);
-
-  fuzzy->addFuzzyRule(fuzzyRule6);
-
-  //REGRA 7: FuzzyRule "SE angulo = anguloPositivo7 ENTAO velocidade = velocidadePositivo7"
-  FuzzyRuleAntecedent* seAnguloPositivo7 = new FuzzyRuleAntecedent();
-  seAnguloPositivo7->joinSingle(anguloPositivo7);
-  FuzzyRuleConsequent* entaoVeloPositivo7 = new FuzzyRuleConsequent();
-  entaoVeloPositivo7->addOutput(velocidadePositivo7);
-  FuzzyRule* fuzzyRule7 = new FuzzyRule(7,seAnguloPositivo7,entaoVeloPositivo7);
-
-  fuzzy->addFuzzyRule(fuzzyRule7);
-
-  //REGRA 8: FuzzyRule "SE angulo = anguloPositivo8 ENTAO velocidade = velocidadePositivo8"
-  FuzzyRuleAntecedent* seAnguloPositivo8 = new FuzzyRuleAntecedent();
-  seAnguloPositivo8->joinSingle(anguloPositivo6);
-  FuzzyRuleConsequent* entaoVeloPositivo8 = new FuzzyRuleConsequent();
-  entaoVeloPositivo8->addOutput(velocidadePositivo8);
-  FuzzyRule* fuzzyRule8 = new FuzzyRule(8,seAnguloPositivo8,entaoVeloPositivo8);
-
-  fuzzy->addFuzzyRule(fuzzyRule8);
-
-  //REGRA 9: FuzzyRule "SE angulo = anguloPositivo9 ENTAO velocidade = velocidadePositivo9"
-  FuzzyRuleAntecedent* seAnguloPositivo9 = new FuzzyRuleAntecedent();
-  seAnguloPositivo9->joinSingle(anguloPositivo9);
-  FuzzyRuleConsequent* entaoVeloPositivo9 = new FuzzyRuleConsequent();
-  entaoVeloPositivo9->addOutput(velocidadePositivo9);
-  FuzzyRule* fuzzyRule9 = new FuzzyRule(9,seAnguloPositivo9,entaoVeloPositivo9);
-
-  fuzzy->addFuzzyRule(fuzzyRule9);
-
-  //REGRA 10: FuzzyRule "SE angulo = anguloPositivo10 ENTAO velocidade = velocidadePositivo10"
-  FuzzyRuleAntecedent* seAnguloPositivo10 = new FuzzyRuleAntecedent();
-  seAnguloPositivo10->joinSingle(anguloPositivo10);
-  FuzzyRuleConsequent* entaoVeloPositivo10 = new FuzzyRuleConsequent();
-  entaoVeloPositivo10->addOutput(velocidadePositivo10);
-  FuzzyRule* fuzzyRule10 = new FuzzyRule(10,seAnguloPositivo10,entaoVeloPositivo10);
-
-  fuzzy->addFuzzyRule(fuzzyRule10);
-
-  //REGRA 10: FuzzyRule "SE angulo = anguloPositivo10 ENTAO velocidade = velocidadePositivo10"
-  FuzzyRuleAntecedent* seAnguloPositivo11 = new FuzzyRuleAntecedent();
-  seAnguloPositivo11->joinSingle(anguloPositivo11);
-  FuzzyRuleConsequent* entaoVeloPositivo11 = new FuzzyRuleConsequent();
-  entaoVeloPositivo11->addOutput(velocidadePositivo11);
-  FuzzyRule* fuzzyRule11 = new FuzzyRule(11,seAnguloPositivo11,entaoVeloPositivo11);
-
-  fuzzy->addFuzzyRule(fuzzyRule11);
   //////////////////////////////////////////////////////////////
 
   //LCD
@@ -377,7 +292,7 @@ void setup() {
   calibrate_sensors();  
   set_last_read_angle_data(millis(), 0, 0, 0, 0, 0, 0);
   LED_MPU.setOn();
-  //Usar a funcao calcular_angulo() para obter os valores de inclinacao nos eixos
+  //Usar a funcao atualizaAngulos() para obter os valores de inclinacao nos eixos
   //////////////////////////////////////////////////////////////
   
   //Motores
@@ -443,6 +358,21 @@ float simular_angulo(){
   return angulo;
 }
 
+//Encapsulamento das funcoes de leitura dos angulos
+void atualizaAngulos(){
+  angulo = calcular_angulo();
+
+  angulo_y = angulo.y;
+  angulo_x = angulo.x;
+}
+
+void valida_angulos(){
+  if((angulo_y > 50) || (angulo_y <-50) || (angulo_x > 50) || (angulo_x < -50)){
+      //erro na leitura
+      erro_mpu = true;
+    }
+}
+
 //Exibe o angulo de inclinacao no display LCD
 void escreve_angulo_lcd(float angulo){
   lcd.setCursor(8,0);
@@ -462,8 +392,8 @@ void motor(int m, float velo){
         motor2.writeMicroseconds(velo);
         break;
       case 3:
-        motor3.writeMicroseconds(velo+7);
-        break;
+        motor3.writeMicroseconds(velo+4);
+         break;
       case 4:
         motor4.writeMicroseconds(velo+7);
         break;
@@ -521,6 +451,7 @@ void loop() {
     else if(dados.cmd ==10){
       //habilita rotina de controle automatico
       flag_controle=1;
+      LED_MPU.setOff();
     }
     else if(dados.cmd ==20){
       //desabilita rotina de controle automatico
@@ -540,8 +471,8 @@ void loop() {
   //===========================================================
   if(flag_controle==2){
     //Leitura do angulo de entrada
-    //angulo_y = simular_angulo();
-    angulo_y = calcular_angulo();
+    
+    atualizaAngulos();
 
     if((angulo_y > 50) || (angulo_y <-50)){
       //erro na leitura
@@ -572,25 +503,26 @@ void loop() {
   
       //Recuperar dados de saida
       float FuzzyOutput = fuzzy->defuzzify(1);
-  
+
+  /*
       Serial.print("Input: ");
       Serial.print(angulo_y);
   
       Serial.print(" | Output: ");
       Serial.print(FuzzyOutput);
+  */
   
       if(flag_direcao==1){ //y>0
-
         float correcao;
 
         if(angulo_y>20)
-          correcao=5;
+          correcao=0;
         else if(angulo_y>10)
           correcao=0;
         else
           correcao=0;
 
-        intensidade_esquerda = AceleracaoFuzzy+3;
+        intensidade_esquerda = AceleracaoFuzzy - FuzzyOutput - correcao;
         intensidade_direita = AceleracaoFuzzy + FuzzyOutput + correcao;
       }
       else{
@@ -599,14 +531,14 @@ void loop() {
         float correcao;
 
         if(angulo_y>20)
-          correcao=10;
+          correcao=0;
         else if(angulo_y>10)
-          correcao=7;
+          correcao=0;
         else
-          correcao=6;
+          correcao=0;
         
-        intensidade_esquerda = AceleracaoFuzzy + FuzzyOutput + correcao +2;
-        intensidade_direita = AceleracaoFuzzy;
+        intensidade_esquerda = AceleracaoFuzzy + FuzzyOutput + correcao;
+        intensidade_direita = AceleracaoFuzzy - FuzzyOutput - correcao;
       }    
     
       //Validacao dos dados gerados antes de executar
@@ -619,13 +551,26 @@ void loop() {
         intensidade_direita=1300;
       if(intensidade_direita>1400)
         intensidade_direita=1400;
-    
+    /*
       Serial.print(" | ESQ: ");
       Serial.print(intensidade_esquerda);
     
       Serial.print(" | DIR: ");
       Serial.println(intensidade_direita);
-  
+     */
+
+     if(inicio_processo==true){
+       inicio_processo=false;
+       time = millis();
+       tempo_decorrido_FUZZY=time;
+     }
+     else{
+      time = millis();
+     }
+
+     //LOG
+      escrita_serial = String((time-tempo_decorrido_FUZZY)/10) + "#" + String(angulo_y) + "#" + String(intensidade_esquerda) + "#" + String(intensidade_direita);
+      Serial.println(escrita_serial);
       
       motor(1,intensidade_esquerda);
       motor(3,intensidade_esquerda);
@@ -637,17 +582,17 @@ void loop() {
       motor(4,intensidade_direita);
      */
      
-      delay(100);
+      //delay(100);
     }
   }
 
   //===========================================================
-  //=========== SISTEMA DE CONTROLE UTILIZANDO PID  ===========
+  //=========== SISTEMA DE CONTROLE UTILIZANDO PID (Z-N) ======
   //===========================================================
   //flag_controle=1;
-  
-  angulo_y = calcular_angulo();
 
+  atualizaAngulos();
+  
   /*
   if(contador_cliente==50){
     flag_controle=0;
@@ -655,6 +600,75 @@ void loop() {
     inicio_processo=true;
   }
   */
+
+  if(flag_controle==2){
+
+    LED_CONTROLE.setOn();
+    
+    atualizaAngulos();
+    myPID.Compute();
+
+/*
+    Serial.print(angulo_y);
+    Serial.print(" # ");
+    Serial.println(Output1);
+*/
+
+    intensidade_esquerda = AceleracaoPID + Output1;
+    intensidade_direita = AceleracaoPID - Output1;
+
+      //Direita
+      if(intensidade_direita < 1280)
+      {
+        intensidade_direita= 1280;
+      }
+      if(intensidade_direita > 1340)
+      {
+        intensidade_direita=1340;
+      }
+      
+      //Esquerda
+      if(intensidade_esquerda < 1280)
+      {
+        intensidade_esquerda= 1280;
+      }
+      if(intensidade_esquerda > 1340)
+      {
+        intensidade_esquerda=1340;
+      }
+
+  /*    
+      Serial.print(intensidade_direita);
+      Serial.print(" # ");
+      Serial.println(intensidade_esquerda);
+*/
+
+      if(inicio_processo==true){
+       inicio_processo=false;
+       time = millis();
+       tempo_decorrido_PID=time;
+     }
+     else{
+      time = millis();
+     }
+   
+      //LOG
+      escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_y) + "#" + String(intensidade_esquerda) + "#" + String(intensidade_direita);
+      Serial.println(escrita_serial);
+
+      motor(1,intensidade_esquerda);
+      motor(3,intensidade_esquerda);
+      motor(2,intensidade_direita);
+      motor(4,intensidade_direita);
+
+      LED_CONTROLE.setOff();
+  }
+
+  //===========================================================
+  //=========== SISTEMA DE CONTROLE UTILIZANDO PID ============
+  //===========================================================
+
+  //flag_controle=1;
   
   if(flag_controle==1){
     LED_CONTROLE.setOn();
@@ -670,16 +684,14 @@ void loop() {
        tempoGasto=1;
      }
     
-    //angulo_y = simular_angulo();
-    angulo_y = calcular_angulo();
+    atualizaAngulos();
+    //Serial.println(angulo_x);
+    
 /* 
     Serial.println(angulo_y);
     Serial.println(time-tempo_decorrido_PID);
 */
-    escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_y);
-    Serial.println(escrita_serial);
     
-    contador_cliente++;
 /*
     Serial.print("(");
     Serial.print(angulo_y);
@@ -687,44 +699,49 @@ void loop() {
     Serial.print(time-tempo_decorrido_PID);
     Serial.println(")");
 */
-  
-    if((angulo_y > 50) || (angulo_y <-50)){
+
+    valida_angulos();
+
+    if(erro_mpu==true){
       //erro na leitura do giroscopio/acelerometro
       flag_controle=0;
       lcd.setCursor(0,0);
-      lcd.print("ERRO DE LEITURA MPU");
+      lcd.print("ERRO DE LEITURA Y");
       lcd.setCursor(1,0);
       lcd.print("Reinicie...");
     }
     else{
-      erro = angulo_y - desired_angle;
+
+      // eixo --------- y
+      erro_pid_y = angulo_y - desired_angle;
 
       //PROPORCIONAL
-      pid_p = kp*erro;
-
+      pid_p_y = kp_y*erro_pid_y;
+      
       //INTEGRATIVO
-      if(-2 < erro < 2){
-        pid_i = pid_i+(ki*erro);  
+      if(-2 < erro_pid_y < 2){
+        pid_i_y = pid_i_y+(ki_y*erro_pid_y);  
       }
 
       //DERIVATIVO
-      pid_d = kd*((erro - erro_anterior)/tempoGasto);
+      pid_d_y = kd_y*((erro_pid_y - erro_pid_y_anterior)/tempoGasto);
       
-
       //SOMA DOS FATORES DO PID
-      PID = pid_p + pid_i + pid_d;
+      //PID_Emp_y = pid_p_y + pid_i_y + pid_d_y;
+
+      PID_Emp_y = pid_p_y + pid_i_y + pid_d_y;
   
-      if(PID < -1000)
+      if(PID_Emp_y < -1000)
       {
-        PID=-1000;
+        PID_Emp_y=-1000;
       }
-      if(PID > 1000)
+      if(PID_Emp_y > 1000)
       {
-        PID=1000;
+        PID_Emp_y=1000;
       }
   
-      intensidade_esquerda = AceleracaoPID - PID;
-      intensidade_direita = AceleracaoPID + PID;
+      intensidade_esquerda = AceleracaoPID - PID_Emp_y;
+      intensidade_direita = AceleracaoPID + PID_Emp_y;
 
       //Direita
       if(intensidade_direita < 1000)
@@ -745,42 +762,98 @@ void loop() {
       {
         intensidade_esquerda=1400;
       }
- /* 
-      Serial.print(">> intensidade_esquerda: ");
-      Serial.print(intensidade_esquerda);
-      Serial.print(" | intensidade_direita: ");
-      Serial.println(intensidade_direita);
 
- */
- 
-  /*
-      motor1.writeMicroseconds(intensidade_esquerda-40);
-      motor3.writeMicroseconds(intensidade_esquerda);
-      motor2.writeMicroseconds(intensidade_direita-40);
-      motor4.writeMicroseconds(intensidade_direita);
-  /*
-      motor3.writeMicroseconds(intensidade_esquerda);
-      motor4.writeMicroseconds(intensidade_direita);
-   */
+      //LOG
+      escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_y) + "#" + String(intensidade_esquerda) + "#" + String(intensidade_direita);
+      //Serial.println(escrita_serial);
 
+/*
       motor(1,intensidade_esquerda);
       motor(3,intensidade_esquerda);
       motor(2,intensidade_direita);
       motor(4,intensidade_direita);
+*/
+      erro_pid_y_anterior = erro_pid_y;   
+
+      // eixo ---------- x
+      erro_pid_x = angulo_x - desired_angle + 5;
+
+      //PROPORCIONAL
+      pid_p_x = kp_x*erro_pid_x;
+      
+      //INTEGRATIVO
+      if(-2 < erro_pid_x < 2){
+        pid_i_x = pid_i_x+(ki_x*erro_pid_x);  
+      }
+
+      //DERIVATIVO
+      pid_d_x = kd_x*((erro_pid_x - erro_pid_x_anterior)/tempoGasto);
+      
+      //SOMA DOS FATORES DO PID
+      PID_Emp_x = pid_p_x + pid_i_x + pid_d_x;
+  
+      if(PID_Emp_x < -1000)
+      {
+        PID_Emp_x=-1000;
+      }
+      if(PID_Emp_x > 1000)
+      {
+        PID_Emp_x=1000;
+      }
+
+      intensidade_frente = AceleracaoPID - PID_Emp_x;
+      intensidade_atras = AceleracaoPID + PID_Emp_x;
+
+      //Direita
+      if(intensidade_frente < 1000)
+      {
+        intensidade_frente= 1000;
+      }
+      if(intensidade_frente > 1400)
+      {
+        intensidade_frente=1400;
+      }
+      
+      //Esquerda
+      if(intensidade_atras < 1000)
+      {
+        intensidade_atras= 1000;
+      }
+      if(intensidade_atras > 1400)
+      {
+        intensidade_atras=1400;
+      }
+
+/*
+      Serial.print(">> intensidade_frente: ");
+      Serial.print(intensidade_frente);
+      Serial.print(" | intensidade_atras: ");
+      Serial.println(intensidade_atras);
+*/
+
+      //LOG
+      escrita_serial = String((time-tempo_decorrido_PID)/10) + "#" + String(angulo_x) + "#" + String(intensidade_frente) + "#" + String(intensidade_atras);
+      Serial.println(escrita_serial);
    
-      erro_anterior = erro; 
+      motor(1,intensidade_frente);
+      motor(2,intensidade_frente);
+      motor(3,intensidade_atras);
+      motor(4,intensidade_atras);
+
+      erro_pid_x_anterior = erro_pid_x; 
+      
       LED_CONTROLE.setOff();      
     }
+    
   }
   
   //flag de calibrar: indica a prioridade da operacao de calibacao (mantendo os motores na velocidade minima/desligados)
   //flag de ok: se for 0 indica que nao houve comandos que utilizam os motores do drone
-  
   if (flag_calibrar == 1 || flag_ok == 0) {
     //calibrar motores
     //lcd.setCursor(0,0);
     //lcd.print("ANGULO: idle       ");
-    angulo_y = calcular_angulo();
+    atualizaAngulos();
     //Serial.println(angulo_y);
     escreve_angulo_lcd(angulo_y);
        
@@ -826,7 +899,6 @@ void loop() {
           //Serial.println(dados.valor);
           motor4.writeMicroseconds(dados.valor);
           break;
-
         case 6:
           //Serial.println("acionando todos os motores");
             motor1.writeMicroseconds(dados.valor);

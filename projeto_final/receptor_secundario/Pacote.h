@@ -8,6 +8,12 @@ typedef struct {
   int valor;
 } pacote;
 
+typedef struct 
+{
+    double x;
+    double y;
+} Angulo;
+
 #endif
 
 
