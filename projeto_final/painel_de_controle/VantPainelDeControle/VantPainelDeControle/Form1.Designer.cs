@@ -36,14 +36,6 @@
             this.btnCalibrar = new System.Windows.Forms.Button();
             this.btnSubir = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.btnPousar = new System.Windows.Forms.Button();
             this.btnConfirmaVelocidadeTotal = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -63,6 +55,12 @@
             this.btnM3parar = new System.Windows.Forms.Button();
             this.btnM2parar = new System.Windows.Forms.Button();
             this.btnM1parar = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
@@ -103,20 +101,16 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tempo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.angulo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button9 = new System.Windows.Forms.Button();
             this.txtQntDados = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnCalibrarMotores.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -142,18 +136,10 @@
             this.btnCalibrarMotores.Controls.Add(this.btnCalibrar);
             this.btnCalibrarMotores.Controls.Add(this.btnSubir);
             this.btnCalibrarMotores.Controls.Add(this.label2);
-            this.btnCalibrarMotores.Controls.Add(this.button8);
-            this.btnCalibrarMotores.Controls.Add(this.button7);
-            this.btnCalibrarMotores.Controls.Add(this.button6);
-            this.btnCalibrarMotores.Controls.Add(this.button5);
-            this.btnCalibrarMotores.Controls.Add(this.button4);
-            this.btnCalibrarMotores.Controls.Add(this.button3);
-            this.btnCalibrarMotores.Controls.Add(this.button2);
-            this.btnCalibrarMotores.Controls.Add(this.button1);
             this.btnCalibrarMotores.Controls.Add(this.btnPousar);
             this.btnCalibrarMotores.Location = new System.Drawing.Point(229, 150);
             this.btnCalibrarMotores.Name = "btnCalibrarMotores";
-            this.btnCalibrarMotores.Size = new System.Drawing.Size(446, 521);
+            this.btnCalibrarMotores.Size = new System.Drawing.Size(188, 521);
             this.btnCalibrarMotores.TabIndex = 4;
             this.btnCalibrarMotores.TabStop = false;
             this.btnCalibrarMotores.Text = "[Controle de direção]";
@@ -161,9 +147,9 @@
             // btnCalibrar
             // 
             this.btnCalibrar.Enabled = false;
-            this.btnCalibrar.Location = new System.Drawing.Point(36, 463);
+            this.btnCalibrar.Location = new System.Drawing.Point(32, 304);
             this.btnCalibrar.Name = "btnCalibrar";
-            this.btnCalibrar.Size = new System.Drawing.Size(387, 29);
+            this.btnCalibrar.Size = new System.Drawing.Size(121, 29);
             this.btnCalibrar.TabIndex = 42;
             this.btnCalibrar.Text = "Calibrar motores";
             this.btnCalibrar.UseVisualStyleBackColor = true;
@@ -173,7 +159,7 @@
             // 
             this.btnSubir.Enabled = false;
             this.btnSubir.Image = global::VantPainelDeControle.Properties.Resources.setaPouN;
-            this.btnSubir.Location = new System.Drawing.Point(170, 176);
+            this.btnSubir.Location = new System.Drawing.Point(32, 148);
             this.btnSubir.Name = "btnSubir";
             this.btnSubir.Size = new System.Drawing.Size(121, 41);
             this.btnSubir.TabIndex = 10;
@@ -184,106 +170,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(199, 27);
+            this.label2.Location = new System.Drawing.Point(63, 49);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "[FRENTE]";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
-            // button8
-            // 
-            this.button8.Enabled = false;
-            this.button8.Image = global::VantPainelDeControle.Properties.Resources.setaSud1;
-            this.button8.Location = new System.Drawing.Point(302, 282);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(121, 95);
-            this.button8.TabIndex = 8;
-            this.button8.Text = "sudeste";
-            this.button8.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            this.button7.Enabled = false;
-            this.button7.Image = global::VantPainelDeControle.Properties.Resources.setaSudo1;
-            this.button7.Location = new System.Drawing.Point(36, 282);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(119, 95);
-            this.button7.TabIndex = 2;
-            this.button7.Text = "sudoeste";
-            this.button7.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            this.button6.Enabled = false;
-            this.button6.Image = global::VantPainelDeControle.Properties.Resources.setaNor1;
-            this.button6.Location = new System.Drawing.Point(36, 74);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(121, 96);
-            this.button6.TabIndex = 2;
-            this.button6.Text = "noroeste";
-            this.button6.UseVisualStyleBackColor = true;
-            // 
-            // button5
-            // 
-            this.button5.Enabled = false;
-            this.button5.Image = global::VantPainelDeControle.Properties.Resources.setaNord1;
-            this.button5.Location = new System.Drawing.Point(302, 74);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(121, 91);
-            this.button5.TabIndex = 2;
-            this.button5.Text = "nordeste";
-            this.button5.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Enabled = false;
-            this.button4.Image = global::VantPainelDeControle.Properties.Resources.setaTraN;
-            this.button4.Location = new System.Drawing.Point(170, 282);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(121, 95);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "tras";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Enabled = false;
-            this.button3.Image = global::VantPainelDeControle.Properties.Resources.setaCimN;
-            this.button3.Location = new System.Drawing.Point(170, 74);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(121, 96);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "frente";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Enabled = false;
-            this.button2.Image = global::VantPainelDeControle.Properties.Resources.setaEsqN;
-            this.button2.Location = new System.Drawing.Point(34, 179);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(121, 85);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "esquerda";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Enabled = false;
-            this.button1.Image = global::VantPainelDeControle.Properties.Resources.setaDirN;
-            this.button1.Location = new System.Drawing.Point(302, 179);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 85);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "direita";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // btnPousar
             // 
             this.btnPousar.Enabled = false;
             this.btnPousar.Image = global::VantPainelDeControle.Properties.Resources.setaPouN;
-            this.btnPousar.Location = new System.Drawing.Point(170, 223);
+            this.btnPousar.Location = new System.Drawing.Point(32, 195);
             this.btnPousar.Name = "btnPousar";
             this.btnPousar.Size = new System.Drawing.Size(121, 41);
             this.btnPousar.TabIndex = 3;
@@ -323,7 +221,7 @@
             // btnConexaoRemota
             // 
             this.btnConexaoRemota.Enabled = false;
-            this.btnConexaoRemota.Location = new System.Drawing.Point(261, 53);
+            this.btnConexaoRemota.Location = new System.Drawing.Point(238, 52);
             this.btnConexaoRemota.Name = "btnConexaoRemota";
             this.btnConexaoRemota.Size = new System.Drawing.Size(87, 45);
             this.btnConexaoRemota.TabIndex = 4;
@@ -408,7 +306,7 @@
             this.groupBox2.Controls.Add(this.lblM2);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.lblM1);
-            this.groupBox2.Location = new System.Drawing.Point(695, 150);
+            this.groupBox2.Location = new System.Drawing.Point(446, 150);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(414, 521);
             this.groupBox2.TabIndex = 9;
@@ -491,6 +389,62 @@
             this.btnM1parar.TabIndex = 44;
             this.btnM1parar.UseVisualStyleBackColor = true;
             this.btnM1parar.Click += new System.EventHandler(this.btnM1parar_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.textBox2);
+            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Location = new System.Drawing.Point(20, 49);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(377, 140);
+            this.groupBox3.TabIndex = 10;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "[Saída de dados]";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(66, 76);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(85, 20);
+            this.textBox2.TabIndex = 54;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(66, 37);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(85, 20);
+            this.textBox1.TabIndex = 51;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(38, 79);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(22, 13);
+            this.label12.TabIndex = 53;
+            this.label12.Text = "Ay:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(38, 40);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(22, 13);
+            this.label11.TabIndex = 52;
+            this.label11.Text = "Ax:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(17, 40);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(0, 13);
+            this.label10.TabIndex = 51;
             // 
             // textBox8
             // 
@@ -733,7 +687,7 @@
             this.lblStatusConexao.AutoSize = true;
             this.lblStatusConexao.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusConexao.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusConexao.Location = new System.Drawing.Point(354, 61);
+            this.lblStatusConexao.Location = new System.Drawing.Point(331, 60);
             this.lblStatusConexao.Name = "lblStatusConexao";
             this.lblStatusConexao.Size = new System.Drawing.Size(49, 24);
             this.lblStatusConexao.TabIndex = 12;
@@ -744,7 +698,7 @@
             this.lblStatusAutomatico.AutoSize = true;
             this.lblStatusAutomatico.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusAutomatico.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusAutomatico.Location = new System.Drawing.Point(524, 61);
+            this.lblStatusAutomatico.Location = new System.Drawing.Point(501, 60);
             this.lblStatusAutomatico.Name = "lblStatusAutomatico";
             this.lblStatusAutomatico.Size = new System.Drawing.Size(49, 24);
             this.lblStatusAutomatico.TabIndex = 11;
@@ -753,7 +707,7 @@
             // btnEstabAuto
             // 
             this.btnEstabAuto.Enabled = false;
-            this.btnEstabAuto.Location = new System.Drawing.Point(431, 53);
+            this.btnEstabAuto.Location = new System.Drawing.Point(408, 52);
             this.btnEstabAuto.Name = "btnEstabAuto";
             this.btnEstabAuto.Size = new System.Drawing.Size(87, 45);
             this.btnEstabAuto.TabIndex = 10;
@@ -764,7 +718,7 @@
             // btnBuzzer
             // 
             this.btnBuzzer.Enabled = false;
-            this.btnBuzzer.Location = new System.Drawing.Point(597, 53);
+            this.btnBuzzer.Location = new System.Drawing.Point(574, 52);
             this.btnBuzzer.Name = "btnBuzzer";
             this.btnBuzzer.Size = new System.Drawing.Size(87, 44);
             this.btnBuzzer.TabIndex = 13;
@@ -777,7 +731,7 @@
             this.lblStatusBuzzer.AutoSize = true;
             this.lblStatusBuzzer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatusBuzzer.ForeColor = System.Drawing.Color.Red;
-            this.lblStatusBuzzer.Location = new System.Drawing.Point(690, 61);
+            this.lblStatusBuzzer.Location = new System.Drawing.Point(667, 60);
             this.lblStatusBuzzer.Name = "lblStatusBuzzer";
             this.lblStatusBuzzer.Size = new System.Drawing.Size(49, 24);
             this.lblStatusBuzzer.TabIndex = 14;
@@ -815,7 +769,7 @@
             // btnLiberarMotores
             // 
             this.btnLiberarMotores.Enabled = false;
-            this.btnLiberarMotores.Location = new System.Drawing.Point(756, 53);
+            this.btnLiberarMotores.Location = new System.Drawing.Point(733, 52);
             this.btnLiberarMotores.Name = "btnLiberarMotores";
             this.btnLiberarMotores.Size = new System.Drawing.Size(87, 44);
             this.btnLiberarMotores.TabIndex = 42;
@@ -828,7 +782,7 @@
             this.lblLiberarMotores.AutoSize = true;
             this.lblLiberarMotores.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLiberarMotores.ForeColor = System.Drawing.Color.Red;
-            this.lblLiberarMotores.Location = new System.Drawing.Point(846, 61);
+            this.lblLiberarMotores.Location = new System.Drawing.Point(823, 60);
             this.lblLiberarMotores.Name = "lblLiberarMotores";
             this.lblLiberarMotores.Size = new System.Drawing.Size(49, 24);
             this.lblLiberarMotores.TabIndex = 43;
@@ -849,10 +803,12 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.tempo,
-            this.angulo});
-            this.dataGridView1.Location = new System.Drawing.Point(1119, 41);
+            this.angulo,
+            this.Column1,
+            this.Column2});
+            this.dataGridView1.Location = new System.Drawing.Point(892, 41);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(289, 509);
+            this.dataGridView1.Size = new System.Drawing.Size(516, 509);
             this.dataGridView1.TabIndex = 46;
             // 
             // tempo
@@ -864,6 +820,16 @@
             // 
             this.angulo.HeaderText = "angulo";
             this.angulo.Name = "angulo";
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "intensidade esquerda";
+            this.Column1.Name = "Column1";
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "intensidade direita";
+            this.Column2.Name = "Column2";
             // 
             // button9
             // 
@@ -881,64 +847,8 @@
             this.txtQntDados.Name = "txtQntDados";
             this.txtQntDados.Size = new System.Drawing.Size(145, 20);
             this.txtQntDados.TabIndex = 49;
-            this.txtQntDados.Text = "500";
+            this.txtQntDados.Text = "800";
             this.txtQntDados.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(17, 40);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(0, 13);
-            this.label10.TabIndex = 51;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(38, 40);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(22, 13);
-            this.label11.TabIndex = 52;
-            this.label11.Text = "Ax:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(38, 79);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(22, 13);
-            this.label12.TabIndex = 53;
-            this.label12.Text = "Ay:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(66, 37);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(85, 20);
-            this.textBox1.TabIndex = 51;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(66, 76);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(85, 20);
-            this.textBox2.TabIndex = 54;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.textBox2);
-            this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Controls.Add(this.label11);
-            this.groupBox3.Controls.Add(this.label10);
-            this.groupBox3.Location = new System.Drawing.Point(20, 49);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(377, 140);
-            this.groupBox3.TabIndex = 10;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "[Saída de dados]";
             // 
             // label3
             // 
@@ -984,9 +894,9 @@
             this.menuStrip1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -999,14 +909,6 @@
         private System.Windows.Forms.GroupBox btnCalibrarMotores;
         private System.Windows.Forms.Button btnConexaoRemota;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnPousar;
         private System.Windows.Forms.Button btnConfirmaVelocidadeTotal;
         private System.Windows.Forms.Label label1;
@@ -1065,8 +967,6 @@
         private System.Windows.Forms.Button btnMmais;
         private System.Windows.Forms.Button btnLimpar;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn tempo;
-        private System.Windows.Forms.DataGridViewTextBoxColumn angulo;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBox2;
@@ -1076,6 +976,10 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox txtQntDados;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn tempo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn angulo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
     }
 }
 

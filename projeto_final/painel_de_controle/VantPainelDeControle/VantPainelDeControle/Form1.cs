@@ -24,9 +24,9 @@ namespace VantPainelDeControle
         float tipo_dado_entrada = 0;
         float[] tupla_dados = new float[2];
 
-        List<String> listaItens = new List<String>(100);
+        List<String> listaItens = new List<String>(500);
         int count = 0;
-        int numero_amostras = 1000;
+        int numero_amostras = 500;
 
         int flag_posicao = 0;
 
@@ -209,10 +209,12 @@ namespace VantPainelDeControle
             {
                 //altera o ponto para virgula para depois usar diretamente no excel
                 string[] tokens = (this.listaItens.ElementAt(i).Replace(".",",")).Split('#');
-                this.dataGridView1.Rows.Add(tokens[0], tokens[1]);
+                this.dataGridView1.Rows.Add(tokens[0], tokens[1], tokens[2], tokens[3]);
 
                 this.dataGridView1.Rows[i].Cells[0].Selected = true;
                 this.dataGridView1.Rows[i].Cells[1].Selected = true;
+                this.dataGridView1.Rows[i].Cells[2].Selected = true;
+                this.dataGridView1.Rows[i].Cells[3].Selected = true;
 
                 dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
             }
